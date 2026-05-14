@@ -2808,7 +2808,7 @@ function deleteEstimate(id){
 }
 function initSimulator(){
   const el=document.getElementById('simEstDate');
-  if(el&&!el.value) el.value=new Date().toISOString().slice(0,10);
+  if(el&&!el.value) el.value=today();
 }
 
 // showTab\u306f\u5148\u982dscript\u3067\u5b9a\u7fa9\u6e08\u307f
