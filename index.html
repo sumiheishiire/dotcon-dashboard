@@ -968,9 +968,18 @@ function applyMigrations(){
   if(!DB.notifications) DB.notifications = [];
   if(!DB.qa) DB.qa = [];
   if(!DB.config) DB.config = JSON.parse(JSON.stringify(DEFAULT_DATA.config));
-  // 2026-05-01以前のデモデータ（2025年分）を自動削除
+  // 日付を正規化（Unixタイムスタンプ→YYYY-MM-DD文字列に変換）してから2026-05-01未満を除外
+  DB.estimates = DB.estimates.map(function(e){
+    if(typeof e.date === 'number'){
+      var d = new Date(e.date);
+      e.date = d.toISOString().slice(0,10);
+    }
+    return e;
+  });
   var before = DB.estimates.length;
-  DB.estimates = DB.estimates.filter(function(e){ return e.date >= '2026-05-01'; });
+  DB.estimates = DB.estimates.filter(function(e){
+    return typeof e.date === 'string' && e.date >= '2026-05-01';
+  });
   if(DB.estimates.length < before) console.log('期間外データ削除:', (before - DB.estimates.length) + '件');
   const dc = DEFAULT_DATA.config;
   ['startDate','endDate','alertDays','monthlyInfo','monthlyEstimate','convRateTarget','quoPerWin','ptInfo','ptEstimate','ptWin','qaAdminPw','adminPw','toolUrls']
@@ -1000,9 +1009,8 @@ function onCloudLoaded(json){
   } else {
     // クラウドが空（初回）→ ローカルバックアップ確認、なければ空DB
     var bak=null; try{bak=localStorage.getItem(STORAGE_KEY+'_bak');}catch(_e){}
-    if(bak){try{DB=JSON.parse(bak);applyMigrations();}catch(_e){initDefaultDB();}}
-    else{initDefaultDB();}
-    try{saveDB();}catch(_e){}
+    if(bak){try{DB=JSON.parse(bak);applyMigrations();try{saveDB();}catch(_e){}}catch(_e){initDefaultDB();}}
+    else{initDefaultDB();} // Driveが空でも自動上書きしない
   }
   finishInit();
 }
