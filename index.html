@@ -925,12 +925,12 @@ const fmtDate = v => {
 const minmax = (min, v, max) => Math.max(min, Math.min(max, v));
 
 // ====== フェーズポイント計算 ======
-// 情報提供: 1pt / 提案・実見積: 情報提供1+見積3=4pt / 契約: 情報提供1+見積3+契約10=14pt
+// 情報提供1pt / 提案見積4pt(+情報提供1) / 実見積7pt(+提案見積3) / 契約14pt(+契約10)
 function calcPhasePts(phase, ptInfo, ptEst, ptWin){
-  if(phase === '情報提供') return ptInfo;              // 1pt
-  if(phase === '提案見積') return ptInfo + ptEst;     // 4pt（情報提供1+提案見積3）
-  if(phase === '実見積')       return ptInfo + ptEst;     // 4pt（提案見積と同カテゴリ）
-  if(phase === '契約')             return ptInfo + ptEst + ptWin; // 14pt（+契約10）
+  if(phase === '情報提供') return ptInfo;                       // 1pt
+  if(phase === '提案見積') return ptInfo + ptEst;              // 4pt（情報提供1＋提案見積3）
+  if(phase === '実見積')   return ptInfo + ptEst + ptEst;      // 7pt（情報提供1＋提案見積3＋実見積3）
+  if(phase === '契約')     return ptInfo + ptEst + ptWin;      // 14pt（情報提供1＋提案見積3＋契約10）
   return 0; // 失注など
 }
 const phaseBadge = (phase) => {
@@ -2650,7 +2650,7 @@ function renderTeamRanking(){
   const colors = ['#f9a825','#9e9e9e','#bf6e0a','#1a73e8','#0f9d58','#7b1fa2','#e53935','#f57c00','#455a64','#5d4037'];
   const bgColors = ['#fffde7','#f5f5f5','#fff3e0','#e8f0fe','#e8f5e9','#f3e5f5','#fce4ec','#fff3e0','#eceff1','#efebe9'];
   const el = document.getElementById('teamRanking');
-  el.innerHTML = '<h3 style="margin-bottom:8px">\ud83c\udfc6 \u30c1\u30fc\u30e0\u6226 \u8a73\u7d30\u30e9\u30f3\u30ad\u30f3\u30b0</h3>\n    <div style="font-size:11px;color:#999;margin-bottom:12px;background:#f5f7fa;padding:6px;border-radius:6px">\n      \u30dd\u30a4\u30f3\u30c8\uff1a\u60c5\u5831\u63d0\u4f9b <strong style="color:#42a5f5">' + (ptInfo) + 'pt</strong> / \u63d0\u6848\u30fb\u5b9f\u898b\u7a4d <strong style="color:#ffa726">' + (ptInfo+ptEst) + 'pt</strong>\uff08\u60c5\u5831\u63d0\u4f9b\u8fbc\uff09/ \u5951\u7d04 <strong style="color:#0f9d58">' + (ptInfo+ptEst+ptWin) + 'pt</strong>\uff08\uff0b' + ptWin + '\uff09\n    </div>\n    <div style="display:flex;flex-direction:column;gap:6px">\n    ' + (ranked.map(([team,pts],i)=>'\n      <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;\n        border-radius:10px;background:' + (bgColors[i]||'#fff') + ';\n        border-left:4px solid ' + (colors[i]||'#ddd') + ';\n        box-shadow:0 1px 3px rgba(0,0,0,.05)">\n        <span style="font-size:18px;flex-shrink:0;min-width:32px;text-align:center">' + (medals[i]||(i+1+'\u4f4d')) + '</span>\n        <span style="flex:1;font-size:14px;font-weight:700;color:#333">' + (team) + '</span>\n        <span style="font-size:22px;font-weight:800;color:' + (colors[i]||'#555') + '">' + (pts) + '<span style="font-size:12px;font-weight:400;color:#999;margin-left:2px">pt</span></span>\n      </div>').join('')) + '\n    </div>';
+  el.innerHTML = '<h3 style="margin-bottom:8px">\ud83c\udfc6 \u30c1\u30fc\u30e0\u6226 \u8a73\u7d30\u30e9\u30f3\u30ad\u30f3\u30b0</h3>\n    <div style="font-size:11px;color:#999;margin-bottom:12px;background:#f5f7fa;padding:6px;border-radius:6px">\n      \u30dd\u30a4\u30f3\u30c8\uff1a\u60c5\u5831\u63d0\u4f9b <strong style="color:#42a5f5">' + ptInfo + 'pt</strong> / \u63d0\u6848\u898b\u7a4d <strong style="color:#ffa726">' + (ptInfo+ptEst) + 'pt</strong> / \u5b9f\u898b\u7a4d <strong style="color:#e91e63">' + (ptInfo+ptEst+ptEst) + 'pt</strong> / \u5951\u7d04 <strong style="color:#0f9d58">' + (ptInfo+ptEst+ptWin) + 'pt</strong>\uff08\uff0b' + ptWin + '\uff09\n    </div>\n    <div style="display:flex;flex-direction:column;gap:6px">\n    ' + (ranked.map(([team,pts],i)=>'\n      <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;\n        border-radius:10px;background:' + (bgColors[i]||'#fff') + ';\n        border-left:4px solid ' + (colors[i]||'#ddd') + ';\n        box-shadow:0 1px 3px rgba(0,0,0,.05)">\n        <span style="font-size:18px;flex-shrink:0;min-width:32px;text-align:center">' + (medals[i]||(i+1+'\u4f4d')) + '</span>\n        <span style="flex:1;font-size:14px;font-weight:700;color:#333">' + (team) + '</span>\n        <span style="font-size:22px;font-weight:800;color:' + (colors[i]||'#555') + '">' + (pts) + '<span style="font-size:12px;font-weight:400;color:#999;margin-left:2px">pt</span></span>\n      </div>').join('')) + '\n    </div>';
 }
 
 // ====== CP \u30eb\u30fc\u30eb\u30da\u30fc\u30b8 ======
