@@ -1668,7 +1668,7 @@ function renderAllTable(){
   if(cntEl) cntEl.textContent=data.length+'件';
   document.getElementById('allTable').innerHTML=data.length?data.map(e=>
     '<tr><td><input type="date" value="' + (e.date||'') + '" onchange="updateEstDate(' + e.id + ',this.value)" style="border:1px solid #ddd;border-radius:4px;font-size:11px;padding:2px 4px;width:120px;cursor:pointer" title="\u65e5\u4ed8\u3092\u5909\u66f4\u3067\u304d\u307e\u3059"></td><td>' + (e.person) + '</td><td>' + (getTeam(e.person)||'-') + '</td><td>' + (e.customer) + '</td>\n    <td>' + (e.location||'-') + '</td><td style="text-align:right">' + (e.amount?yen(e.amount):'-') + '</td>\n    <td>' + (phaseBadge(e.phase)) + '</td><td>' + fmtDate(e.lastUpdate||e.date) + '</td>\n    <td style="text-align:center;white-space:nowrap">' + fileCell(e) + '</td>\n    <td style="white-space:nowrap">\n      <button class="btn btn-s" style="padding:3px 8px;font-size:11px" onclick="openPhaseModal(' + (e.id) + ')">\u25b6</button>\n      <button class="btn" style="padding:3px 7px;font-size:11px;background:#fce4ec;color:#c62828;margin-left:3px" onclick="deleteEstimate(' + (e.id) + ')">\ud83d\uddd1\ufe0f</button>\n    </td></tr>\n    ' + (e.phase==='\u5931\u6ce8'?'<tr><td colspan="10"><div class="lost-detail"><strong>\u5931\u6ce8\u7406\u7531:</strong> ' + (e.lostReason||'-') + (e.lostDetail?' / '+e.lostDetail:'') + '</div></td></tr>':'')
-  ).join(''):'<tr><td colspan="9" style="text-align:center;color:#999;padding:20px">\u8a\u8a72\u5f53\u306a\u3057</td></tr>';
+  ).join(''):'<tr><td colspan="9" style="text-align:center;color:#999;padding:20px">\u8a72\u5f53\u306a\u3057</td></tr>';
 }
 
 // ====== \u6848\u4ef6\u65e5\u4ed8\u5909\u66f4 ======
