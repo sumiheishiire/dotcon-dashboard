@@ -289,7 +289,7 @@ function checkPw(){}
   <button class="tab-btn active" data-tab="dashboard">TOP</button>
   <button class="tab-btn" data-tab="simulator" style="color:#0d7c42;font-weight:700">&#x1F9EE; &#x898B;&#x7A4D;&#x8A66;&#x7B97;</button>
   <button class="tab-btn" data-tab="mypage">&#x30DE;&#x30A4;&#x30DA;&#x30FC;&#x30B8;</button>
-  <button class="tab-btn" data-tab="estimates">&#x898B;&#x7A4D;&#x4E00;&#x89A7;</button>
+  <button class="tab-btn" data-tab="estimates">&#x6848;&#x4EF6;&#x9032;&#x6357;&#x4E00;&#x89A7;</button>
   <button class="tab-btn" data-tab="tools">&#x55B6;&#x696D;&#x30C4;&#x30FC;&#x30EB;</button>
   <button class="tab-btn" data-tab="qa">Q&A</button>
   <button class="tab-btn" data-tab="cprule">CP&#x30EB;&#x30FC;&#x30EB;</button>
@@ -410,12 +410,12 @@ function checkPw(){}
   </div>
 </div>
 
-<!-- ===== &#x898B;&#x7A4D;&#x4E00;&#x89A7; ===== -->
+<!-- ===== 案件進捗一覧 ===== -->
 <div class="tab-content" id="tab-estimates">
   <div class="card">
     <!-- タイトル＋自分/全員トグル -->
     <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:10px">
-      <h3>&#x898B;&#x7A4D;&#x5C65;&#x6B74;</h3>
+      <h3>&#x6848;&#x4EF6;&#x9032;&#x6357;&#x4E00;&#x89A7;</h3>
       <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
         <button id="estViewMine" class="btn btn-p" style="padding:5px 14px;font-size:12px" onclick="setEstView('mine')">&#x1F464; &#x81EA;&#x5206;&#x306E;&#x307F;</button>
         <button id="estViewAll" class="btn" style="padding:5px 14px;font-size:12px;background:#e3f2fd;color:#1a73e8" onclick="setEstView('all')">&#x1F465; &#x5168;&#x54E1;</button>
@@ -1652,8 +1652,19 @@ function renderAllTable(){
   var cntEl=document.getElementById('estCount');
   if(cntEl) cntEl.textContent=data.length+'件';
   document.getElementById('allTable').innerHTML=data.length?data.map(e=>
-    '<tr><td>' + fmtDate(e.date) + '</td><td>' + (e.person) + '</td><td>' + (getTeam(e.person)||'-') + '</td><td>' + (e.customer) + '</td>\n    <td>' + (e.location||'-') + '</td><td style="text-align:right">' + (e.amount?yen(e.amount):'-') + '</td>\n    <td>' + (phaseBadge(e.phase)) + '</td><td>' + fmtDate(e.lastUpdate||e.date) + '</td>\n    <td style="text-align:center;white-space:nowrap">' + fileCell(e) + '</td>\n    <td style="white-space:nowrap">\n      <button class="btn btn-s" style="padding:3px 8px;font-size:11px" onclick="openPhaseModal(' + (e.id) + ')">\u25b6</button>\n      <button class="btn" style="padding:3px 7px;font-size:11px;background:#fce4ec;color:#c62828;margin-left:3px" onclick="deleteEstimate(' + (e.id) + ')">\ud83d\uddd1\ufe0f</button>\n    </td></tr>\n    ' + (e.phase==='\u5931\u6ce8'?'<tr><td colspan="10"><div class="lost-detail"><strong>\u5931\u6ce8\u7406\u7531:</strong> ' + (e.lostReason||'-') + (e.lostDetail?' / '+e.lostDetail:'') + '</div></td></tr>':'')
-  ).join(''):'<tr><td colspan="9" style="text-align:center;color:#999;padding:20px">\u8a72\u5f53\u306a\u3057</td></tr>';
+    '<tr><td><input type="date" value="' + (e.date||'') + '" onchange="updateEstDate(' + e.id + ',this.value)" style="border:1px solid #ddd;border-radius:4px;font-size:11px;padding:2px 4px;width:120px;cursor:pointer" title="\u65e5\u4ed8\u3092\u5909\u66f4\u3067\u304d\u307e\u3059"></td><td>' + (e.person) + '</td><td>' + (getTeam(e.person)||'-') + '</td><td>' + (e.customer) + '</td>\n    <td>' + (e.location||'-') + '</td><td style="text-align:right">' + (e.amount?yen(e.amount):'-') + '</td>\n    <td>' + (phaseBadge(e.phase)) + '</td><td>' + fmtDate(e.lastUpdate||e.date) + '</td>\n    <td style="text-align:center;white-space:nowrap">' + fileCell(e) + '</td>\n    <td style="white-space:nowrap">\n      <button class="btn btn-s" style="padding:3px 8px;font-size:11px" onclick="openPhaseModal(' + (e.id) + ')">\u25b6</button>\n      <button class="btn" style="padding:3px 7px;font-size:11px;background:#fce4ec;color:#c62828;margin-left:3px" onclick="deleteEstimate(' + (e.id) + ')">\ud83d\uddd1\ufe0f</button>\n    </td></tr>\n    ' + (e.phase==='\u5931\u6ce8'?'<tr><td colspan="10"><div class="lost-detail"><strong>\u5931\u6ce8\u7406\u7531:</strong> ' + (e.lostReason||'-') + (e.lostDetail?' / '+e.lostDetail:'') + '</div></td></tr>':'')
+  ).join(''):'<tr><td colspan="9" style="text-align:center;color:#999;padding:20px">\u8a\u8a72\u5f53\u306a\u3057</td></tr>';
+}
+
+// ====== \u6848\u4ef6\u65e5\u4ed8\u5909\u66f4 ======
+function updateEstDate(id, newDate){
+  if(!newDate) return;
+  var est = DB.estimates.find(function(e){ return e.id === id; });
+  if(!est) return;
+  est.date = newDate;
+  est.lastUpdate = today();
+  saveDB();
+  renderAll();
 }
 
 // ====== \u55b6\u696d\u30c4\u30fc\u30eb ======
