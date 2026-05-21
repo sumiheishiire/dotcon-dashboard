@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>&#x30C9;&#x30C3;&#x30C8;&#x30B3;&#x30F3;CP &#x30C0;&#x30C3;&#x30B7;&#x30E5;&#x30DC;&#x30FC;&#x30C9;</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Segoe UI','Hiragino Sans','Meiryo',sans-serif;background:#f0f2f5;color:#333;line-height:1.6;font-size:14px}
@@ -22,11 +21,11 @@ a{color:#1a73e8;text-decoration:none}
 .tab-btn{background:none;border:none;padding:12px 16px;font-size:13px;font-weight:600;color:#666;cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;transition:.2s}
 .tab-btn.active{color:#1a73e8;border-bottom-color:#1a73e8}
 .tab-btn:hover{color:#1a73e8;background:#f5f8ff}
-.container{max-width:1280px;margin:0 auto;padding:10px 16px}
+.container{max-width:1280px;margin:0 auto;padding:16px}
 .tab-content{display:none}.tab-content.active{display:block}
-.card{background:#fff;border-radius:12px;padding:14px 18px;box-shadow:0 1px 4px rgba(0,0,0,.08);margin-bottom:12px}
+.card{background:#fff;border-radius:12px;padding:20px;box-shadow:0 1px 4px rgba(0,0,0,.08);margin-bottom:16px}
 .card h3{font-size:15px;margin-bottom:12px;display:flex;align-items:center;gap:8px}
-.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-bottom:10px}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:16px}
 .kpi{background:#fff;border-radius:12px;padding:16px;box-shadow:0 1px 4px rgba(0,0,0,.08);text-align:center;transition:.2s;border-left:4px solid #1a73e8}
 .kpi:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.12)}
 .kpi .val{font-size:28px;font-weight:800;color:#1a73e8}
@@ -35,7 +34,7 @@ a{color:#1a73e8;text-decoration:none}
 .kpi.orange{border-left-color:#f57c00}.kpi.orange .val{color:#f57c00}
 .kpi.red{border-left-color:#e53935}.kpi.red .val{color:#e53935}
 .kpi.purple{border-left-color:#7b1fa2}.kpi.purple .val{color:#7b1fa2}
-.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
 /* ====== \30D5 \30A1 \30CD \30EB  ====== */
 .funnel-wrap{display:flex;gap:0;align-items:flex-start;width:100%}
@@ -290,7 +289,7 @@ function checkPw(){}
   <button class="tab-btn active" data-tab="dashboard">TOP</button>
   <button class="tab-btn" data-tab="simulator" style="color:#0d7c42;font-weight:700">&#x1F9EE; &#x898B;&#x7A4D;&#x8A66;&#x7B97;</button>
   <button class="tab-btn" data-tab="mypage">&#x30DE;&#x30A4;&#x30DA;&#x30FC;&#x30B8;</button>
-  <button class="tab-btn" data-tab="estimates">&#x898B;&#x7A4D;&#x4E00;&#x89A7;</button>
+  <button class="tab-btn" data-tab="estimates">案件一覧</button>
   <button class="tab-btn" data-tab="tools">&#x55B6;&#x696D;&#x30C4;&#x30FC;&#x30EB;</button>
   <button class="tab-btn" data-tab="qa">Q&A</button>
   <button class="tab-btn" data-tab="cprule">CP&#x30EB;&#x30FC;&#x30EB;</button>
@@ -380,21 +379,21 @@ function checkPw(){}
   <div class="grid-2">
     <div class="card">
       <h3 id="chartMonthlyTitle">&#x6708;&#x5225;&#x898B;&#x7A4D;&#x63A8;&#x79FB;</h3>
-      <canvas id="chartMonthly" height="160"></canvas>
+      <canvas id="chartMonthly" height="220"></canvas>
     </div>
     <div class="card">
       <h3 id="chartBarTitle">&#x4EF6;&#x6570;&#x6BD4;&#x8F03;</h3>
-      <canvas id="chartBar" height="160"></canvas>
+      <canvas id="chartBar" height="220"></canvas>
     </div>
   </div>
   <div class="grid-2">
     <div class="card">
       <h3 id="chartDonutTitle">&#x91D1;&#x984D;&#x6BD4;&#x8F03;</h3>
-      <div style="position:relative;height:240px"><canvas id="chartDonut"></canvas></div>
+      <canvas id="chartDonut" height="220"></canvas>
     </div>
     <div class="card">
       <h3>&#x30D5;&#x30A7;&#x30FC;&#x30BA;&#x5225; &#x53D7;&#x6CE8;&#x7387;&#x30FB;&#x8EE2;&#x63DB;&#x7387;</h3>
-      <canvas id="chartConv" height="160"></canvas>
+      <canvas id="chartConv" height="220"></canvas>
     </div>
   </div>
 </div>
@@ -411,12 +410,12 @@ function checkPw(){}
   </div>
 </div>
 
-<!-- ===== &#x898B;&#x7A4D;&#x4E00;&#x89A7; ===== -->
+<!-- ===== 案件一覧 ===== -->
 <div class="tab-content" id="tab-estimates">
   <div class="card">
     <!-- タイトル＋自分/全員トグル -->
     <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:10px">
-      <h3>&#x898B;&#x7A4D;&#x5C65;&#x6B74;</h3>
+      <h3>&#x6848;&#x4EF6;&#x9032;&#x6357;&#x4E00;&#x89A7;</h3>
       <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
         <button id="estViewMine" class="btn btn-p" style="padding:5px 14px;font-size:12px" onclick="setEstView('mine')">&#x1F464; &#x81EA;&#x5206;&#x306E;&#x307F;</button>
         <button id="estViewAll" class="btn" style="padding:5px 14px;font-size:12px;background:#e3f2fd;color:#1a73e8" onclick="setEstView('all')">&#x1F465; &#x5168;&#x54E1;</button>
@@ -586,20 +585,9 @@ function checkPw(){}
 <!-- ===== Q&A ===== -->
 <div class="tab-content" id="tab-qa">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-    <h3 style="font-size:16px">Q&amp;A &#x63B2;&#x793A;&#x677F;</h3>
+    <h3 style="font-size:16px">Q&A &#x63B2;&#x793A;&#x677F;</h3>
     <button class="btn btn-p" onclick="openModal('qaModal')">+ &#x8CEA;&#x554F;&#x3059;&#x308B;</button>
   </div>
-
-  <!-- AIチャットボット導線 -->
-  <div style="background:linear-gradient(135deg,#e8f0fe 0%,#f0f7ff 100%);border:1px solid #c5d8fb;border-radius:12px;padding:16px 20px;display:flex;align-items:center;gap:16px;margin-bottom:16px;flex-wrap:wrap">
-    <div style="font-size:36px;flex-shrink:0;line-height:1">🤖</div>
-    <div style="flex:1;min-width:200px">
-      <div style="font-size:14px;font-weight:700;color:#1a73e8;margin-bottom:2px">DOTCON AIチャットボット</div>
-      <div style="font-size:12px;color:#555;line-height:1.5">施工・貯留量計算・見積・行政対応など<strong>140項目</strong>のQ&amp;Aデータベースから<br>キーワードで即時検索・回答します</div>
-    </div>
-    <a href="chatbot.html" target="_blank" style="background:#1a73e8;color:#fff;border:none;border-radius:8px;padding:10px 20px;font-size:13px;font-weight:600;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;transition:.15s;flex-shrink:0" onmouseover="this.style.background='#1558b0'" onmouseout="this.style.background='#1a73e8'">🤖 チャットで調べる →</a>
-  </div>
-
   <div style="display:flex;gap:8px;margin-bottom:12px">
     <button class="btn btn-s qa-filter active" data-f="all" onclick="filterQA('all',this)">&#x3059;&#x3079;&#x3066;</button>
     <button class="btn btn-s qa-filter" data-f="open" onclick="filterQA('open',this)">&#x672A;&#x56DE;&#x7B54;</button>
@@ -935,6 +923,16 @@ const fmtDate = v => {
   return String(v);
 };
 const minmax = (min, v, max) => Math.max(min, Math.min(max, v));
+
+// ====== フェーズポイント計算 ======
+// 情報提供1pt / 提案見積4pt(+情報提供1) / 実見積7pt(+提案見積3) / 契約14pt(+契約10)
+function calcPhasePts(phase, ptInfo, ptEst, ptWin){
+  if(phase === '情報提供') return ptInfo;                       // 1pt
+  if(phase === '提案見積') return ptInfo + ptEst;              // 4pt（情報提供1＋提案見積3）
+  if(phase === '実見積')   return ptInfo + ptEst + ptEst;      // 7pt（情報提供1＋提案見積3＋実見積3）
+  if(phase === '契約')     return ptInfo + ptEst + ptWin;      // 14pt（情報提供1＋提案見積3＋契約10）
+  return 0; // 失注など
+}
 const phaseBadge = (phase) => {
   const colors = {
     '\u60c5\u5831\u63d0\u4f9b': {bg:'#e3f2fd', color:'#1e88e5'},
@@ -980,9 +978,18 @@ function applyMigrations(){
   if(!DB.notifications) DB.notifications = [];
   if(!DB.qa) DB.qa = [];
   if(!DB.config) DB.config = JSON.parse(JSON.stringify(DEFAULT_DATA.config));
-  // 2026-05-01以前のデモデータ（2025年分）を自動削除
+  // 日付を正規化（Unixタイムスタンプ→YYYY-MM-DD文字列に変換）してから2026-05-01未満を除外
+  DB.estimates = DB.estimates.map(function(e){
+    if(typeof e.date === 'number'){
+      var d = new Date(e.date);
+      e.date = d.toISOString().slice(0,10);
+    }
+    return e;
+  });
   var before = DB.estimates.length;
-  DB.estimates = DB.estimates.filter(function(e){ return e.date >= '2026-05-01'; });
+  DB.estimates = DB.estimates.filter(function(e){
+    return typeof e.date === 'string' && e.date >= '2026-05-01';
+  });
   if(DB.estimates.length < before) console.log('期間外データ削除:', (before - DB.estimates.length) + '件');
   const dc = DEFAULT_DATA.config;
   ['startDate','endDate','alertDays','monthlyInfo','monthlyEstimate','convRateTarget','quoPerWin','ptInfo','ptEstimate','ptWin','qaAdminPw','adminPw','toolUrls']
@@ -1012,9 +1019,8 @@ function onCloudLoaded(json){
   } else {
     // クラウドが空（初回）→ ローカルバックアップ確認、なければ空DB
     var bak=null; try{bak=localStorage.getItem(STORAGE_KEY+'_bak');}catch(_e){}
-    if(bak){try{DB=JSON.parse(bak);applyMigrations();}catch(_e){initDefaultDB();}}
-    else{initDefaultDB();}
-    try{saveDB();}catch(_e){}
+    if(bak){try{DB=JSON.parse(bak);applyMigrations();try{saveDB();}catch(_e){}}catch(_e){initDefaultDB();}}
+    else{initDefaultDB();} // Driveが空でも自動上書きしない
   }
   finishInit();
 }
@@ -1396,39 +1402,6 @@ function renderFunnel(){
 }
 
 // ====== \u30b0\u30e9\u30d5 ======
-Chart.register(ChartDataLabels);
-const DL_CNT={anchor:'end',align:'end',color:'#1a73e8',font:{size:11,weight:'bold'},formatter:v=>v===0?'':v+'\u4ef6',clip:false};
-const DL_PCT={anchor:'center',align:'center',color:'#fff',font:{size:13,weight:'bold'},formatter:v=>v+'%'};
-const AMT_CLR=['#42a5f5','#66bb6a','#ffa726','#ab47bc','#26a69a','#ef5350','#78909c','#8d6e63'];
-function renderAmountBar(data){
-  document.getElementById('chartDonutTitle').textContent='\u898b\u7a4d\u91d1\u984d \u4e0a\u4f4d12\u4ef6';
-  const sorted=data.slice().sort((a,b)=>b.amount-a.amount).slice(0,12);
-  chartDonut=new Chart(document.getElementById('chartDonut'),{
-    type:'bar',
-    data:{
-      labels:sorted.map(e=>(e.customer||'').slice(0,12)+(e.customer&&e.customer.length>12?'\u2026':'')),
-      datasets:[{data:sorted.map(e=>e.amount),backgroundColor:sorted.map((_,i)=>AMT_CLR[i%8]),borderRadius:4}]
-    },
-    options:{
-      indexAxis:'y',
-      responsive:true,
-      maintainAspectRatio:false,
-      layout:{padding:{right:90}},
-      plugins:{
-        legend:{display:false},
-        datalabels:{anchor:'end',align:'end',color:'#333',font:{size:10,weight:'bold'},formatter:v=>yen(v),clip:false},
-        tooltip:{callbacks:{
-          title:ctx=>{const e=sorted[ctx[0].dataIndex];return (e.customer||'')+'\uff5c'+(e.person||'');},
-          label:ctx=>yen(ctx.parsed.x)
-        }}
-      },
-      scales:{
-        x:{beginAtZero:true,ticks:{callback:v=>yen(v),maxTicksLimit:4,font:{size:10}},grid:{color:'#f5f5f5'}},
-        y:{ticks:{font:{size:11}}}
-      }
-    }
-  });
-}
 let chartMonthly,chartBar,chartDonut;
 function renderCharts(){
   const data=getFilteredEstimates();
@@ -1443,7 +1416,7 @@ function renderCharts(){
   chartMonthly=new Chart(document.getElementById('chartMonthly'),{
     type:'bar',
     data:{labels:months,datasets:[{label:'\u898b\u7a4d\u4ef6\u6570',data:months.map(m=>monthMap[m]),backgroundColor:'rgba(26,115,232,.7)',borderRadius:6}]},
-    options:{responsive:true,plugins:{legend:{display:false},datalabels:DL_CNT},scales:{y:{beginAtZero:true,ticks:{stepSize:1}}}}
+    options:{responsive:true,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{stepSize:1}}}}
   });
 
   // --- \u68d2\u30b0\u30e9\u30d5\uff08\u30d3\u30e5\u30fc\u3067\u5185\u5bb9\u5909\u66f4\uff09 ---
@@ -1457,7 +1430,7 @@ function renderCharts(){
     chartBar=new Chart(document.getElementById('chartBar'),{
       type:'bar',
       data:{labels:entries.map(e=>e[0]),datasets:[{label:'\u4ef6\u6570',data:entries.map(e=>e[1]),backgroundColor:entries.map((_,i)=>'hsl(' + (i*65) + ',60%,52%)'),borderRadius:6}]},
-      options:{responsive:true,plugins:{legend:{display:false},datalabels:DL_CNT},scales:{y:{beginAtZero:true,ticks:{stepSize:1}}}}
+      options:{responsive:true,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{stepSize:1}}}}
     });
   } else if(currentView==='team'){
     const sel=document.getElementById('viewTeamSelect').value;
@@ -1470,7 +1443,7 @@ function renderCharts(){
       chartBar=new Chart(document.getElementById('chartBar'),{
         type:'bar',
         data:{labels:entries.map(e=>e[0]),datasets:[{label:'\u4ef6\u6570',data:entries.map(e=>e[1]),backgroundColor:entries.map((_,i)=>'hsl(' + (i*50) + ',65%,55%)'),borderRadius:6}]},
-        options:{indexAxis:'y',responsive:true,layout:{padding:{right:50}},plugins:{legend:{display:false},datalabels:{anchor:'end',align:'end',color:'#1a73e8',font:{size:11,weight:'bold'},formatter:v=>v===0?'':v+'件',clip:false}},scales:{x:{beginAtZero:true,ticks:{stepSize:1}}}}
+        options:{indexAxis:'y',responsive:true,plugins:{legend:{display:false}},scales:{x:{beginAtZero:true,ticks:{stepSize:1}}}}
       });
     } else {
       // \u5168\u8ab2\u6bd4\u8f03: \u8ab2\u5225\u4ef6\u6570
@@ -1481,7 +1454,7 @@ function renderCharts(){
       chartBar=new Chart(document.getElementById('chartBar'),{
         type:'bar',
         data:{labels:entries.map(e=>e[0]),datasets:[{label:'\u4ef6\u6570',data:entries.map(e=>e[1]),backgroundColor:entries.map((_,i)=>'hsl(' + (i*65) + ',60%,52%)'),borderRadius:6}]},
-        options:{responsive:true,plugins:{legend:{display:false},datalabels:DL_CNT},scales:{y:{beginAtZero:true,ticks:{stepSize:1}}}}
+        options:{responsive:true,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{stepSize:1}}}}
       });
     }
   } else {
@@ -1497,7 +1470,7 @@ function renderCharts(){
       chartBar=new Chart(document.getElementById('chartBar'),{
         type:'bar',
         data:{labels:entries.map(e=>e[0]),datasets:[{label:'\u4ef6\u6570',data:entries.map(e=>e[1]),backgroundColor:entries.map(e=>PHASE_COLORS[e[0]]||'#999'),borderRadius:6}]},
-        options:{responsive:true,plugins:{legend:{display:false},datalabels:DL_CNT},scales:{y:{beginAtZero:true,ticks:{stepSize:1}}}}
+        options:{responsive:true,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{stepSize:1}}}}
       });
     } else {
       // \u5168\u54e1\u6bd4\u8f03: \u500b\u4eba\u5225\u4ef6\u6570
@@ -1508,14 +1481,72 @@ function renderCharts(){
       chartBar=new Chart(document.getElementById('chartBar'),{
         type:'bar',
         data:{labels:entries.map(e=>e[0]),datasets:[{label:'\u4ef6\u6570',data:entries.map(e=>e[1]),backgroundColor:entries.map((_,i)=>'hsl(' + (i*16) + ',65%,55%)'),borderRadius:6}]},
-        options:{indexAxis:'y',responsive:true,layout:{padding:{right:50}},plugins:{legend:{display:false},datalabels:{anchor:'end',align:'end',color:'#1a73e8',font:{size:11,weight:'bold'},formatter:v=>v===0?'':v+'件',clip:false}},scales:{x:{beginAtZero:true,ticks:{stepSize:1}}}}
+        options:{indexAxis:'y',responsive:true,plugins:{legend:{display:false}},scales:{x:{beginAtZero:true,ticks:{stepSize:1}}}}
       });
     }
   }
 
-  // --- \u898b\u7a4d\u91d1\u984d \u500b\u5225\u68d2\u30b0\u30e9\u30d5 ---
+  // --- \u30c9\u30fc\u30ca\u30c4\uff08\u91d1\u984d\u6bd4\u8f03\uff09 ---
   if(chartDonut)chartDonut.destroy();
-  renderAmountBar(data);
+  const DONUT_COLORS=['#42a5f5','#66bb6a','#ffa726','#ab47bc','#26a69a','#ef5350','#78909c','#8d6e63'];
+  if(currentView==='all'){
+    document.getElementById('chartDonutTitle').textContent='\u8ab2\u5225 \u898b\u7a4d\u91d1\u984d';
+    const tMap={};
+    data.forEach(e=>{const t=getTeam(e.person)||'\u672a\u6240\u5c5e';tMap[t]=(tMap[t]||0)+e.amount});
+    const entries=Object.entries(tMap).sort((a,b)=>b[1]-a[1]);
+    chartDonut=new Chart(document.getElementById('chartDonut'),{
+      type:'doughnut',
+      data:{labels:entries.map(e=>e[0]),datasets:[{data:entries.map(e=>e[1]),backgroundColor:DONUT_COLORS}]},
+      options:{responsive:true,plugins:{legend:{position:'bottom',labels:{font:{size:12}}}}}
+    });
+  } else if(currentView==='team'){
+    const sel=document.getElementById('viewTeamSelect').value;
+    if(sel){
+      document.getElementById('chartDonutTitle').textContent=sel+' \u500b\u4eba\u5225 \u898b\u7a4d\u91d1\u984d';
+      const pMap={};
+      data.forEach(e=>{pMap[e.person]=(pMap[e.person]||0)+e.amount});
+      const entries=Object.entries(pMap).sort((a,b)=>b[1]-a[1]);
+      chartDonut=new Chart(document.getElementById('chartDonut'),{
+        type:'doughnut',
+        data:{labels:entries.map(e=>e[0]),datasets:[{data:entries.map(e=>e[1]),backgroundColor:DONUT_COLORS}]},
+        options:{responsive:true,plugins:{legend:{position:'bottom',labels:{font:{size:12}}}}}
+      });
+    } else {
+      document.getElementById('chartDonutTitle').textContent='\u8ab2\u5225 \u898b\u7a4d\u91d1\u984d\uff08\u6bd4\u8f03\uff09';
+      const tMap={};
+      data.forEach(e=>{const t=getTeam(e.person)||'\u672a\u6240\u5c5e';tMap[t]=(tMap[t]||0)+e.amount});
+      const entries=Object.entries(tMap).sort((a,b)=>b[1]-a[1]);
+      chartDonut=new Chart(document.getElementById('chartDonut'),{
+        type:'doughnut',
+        data:{labels:entries.map(e=>e[0]),datasets:[{data:entries.map(e=>e[1]),backgroundColor:DONUT_COLORS}]},
+        options:{responsive:true,plugins:{legend:{position:'bottom',labels:{font:{size:12}}}}}
+      });
+    }
+  } else {
+    const sel=document.getElementById('viewPersonSelect').value;
+    if(sel){
+      document.getElementById('chartDonutTitle').textContent=sel+' \u30d5\u30a7\u30fc\u30ba\u5225 \u91d1\u984d';
+      const phMap={};
+      [...PHASE_ORDER,'\u5931\u6ce8'].forEach(p=>phMap[p]=0);
+      data.forEach(e=>{phMap[e.phase]=(phMap[e.phase]||0)+e.amount});
+      const entries=Object.entries(phMap).filter(e=>e[1]>0);
+      chartDonut=new Chart(document.getElementById('chartDonut'),{
+        type:'doughnut',
+        data:{labels:entries.map(e=>e[0]),datasets:[{data:entries.map(e=>e[1]),backgroundColor:entries.map(e=>PHASE_COLORS[e[0]]||'#999')}]},
+        options:{responsive:true,plugins:{legend:{position:'bottom',labels:{font:{size:12}}}}}
+      });
+    } else {
+      document.getElementById('chartDonutTitle').textContent='\u500b\u4eba\u5225 \u898b\u7a4d\u91d1\u984d';
+      const pMap={};
+      data.forEach(e=>{pMap[e.person]=(pMap[e.person]||0)+e.amount});
+      const entries=Object.entries(pMap).sort((a,b)=>b[1]-a[1]);
+      chartDonut=new Chart(document.getElementById('chartDonut'),{
+        type:'doughnut',
+        data:{labels:entries.map(e=>e[0]),datasets:[{data:entries.map(e=>e[1]),backgroundColor:entries.map((_,i)=>DONUT_COLORS[i%DONUT_COLORS.length])}]},
+        options:{responsive:true,plugins:{legend:{position:'bottom',labels:{font:{size:11}}}}}
+      });
+    }
+  }
 
   // \u2500\u2500 \u30d5\u30a7\u30fc\u30ba\u5225\u8ee2\u63db\u7387\u30b0\u30e9\u30d5\uff08\u5e38\u306b\u8868\u793a\uff09 \u2500\u2500
   if (window.chartConv && typeof window.chartConv.destroy === 'function') {
@@ -1546,7 +1577,6 @@ function renderCharts(){
       responsive:true,
       plugins:{
         legend:{display:false},
-        datalabels:DL_PCT,
         tooltip:{callbacks:{label:ctx=>'\u8ee2\u63db\u7387: ' + (ctx.parsed.y) + '%'}}
       },
       scales:{
@@ -1632,8 +1662,19 @@ function renderAllTable(){
   var cntEl=document.getElementById('estCount');
   if(cntEl) cntEl.textContent=data.length+'件';
   document.getElementById('allTable').innerHTML=data.length?data.map(e=>
-    '<tr><td>' + fmtDate(e.date) + '</td><td>' + (e.person) + '</td><td>' + (getTeam(e.person)||'-') + '</td><td>' + (e.customer) + '</td>\n    <td>' + (e.location||'-') + '</td><td style="text-align:right">' + (e.amount?yen(e.amount):'-') + '</td>\n    <td>' + (phaseBadge(e.phase)) + '</td><td>' + fmtDate(e.lastUpdate||e.date) + '</td>\n    <td style="text-align:center;white-space:nowrap">' + fileCell(e) + '</td>\n    <td style="white-space:nowrap">\n      <button class="btn btn-s" style="padding:3px 8px;font-size:11px" onclick="openPhaseModal(' + (e.id) + ')">\u25b6</button>\n      <button class="btn" style="padding:3px 7px;font-size:11px;background:#fce4ec;color:#c62828;margin-left:3px" onclick="deleteEstimate(' + (e.id) + ')">\ud83d\uddd1\ufe0f</button>\n    </td></tr>\n    ' + (e.phase==='\u5931\u6ce8'?'<tr><td colspan="10"><div class="lost-detail"><strong>\u5931\u6ce8\u7406\u7531:</strong> ' + (e.lostReason||'-') + (e.lostDetail?' / '+e.lostDetail:'') + '</div></td></tr>':'')
+    '<tr><td><input type="date" value="' + (e.date||'') + '" onchange="updateEstDate(' + e.id + ',this.value)" style="border:1px solid #ddd;border-radius:4px;font-size:11px;padding:2px 4px;width:120px;cursor:pointer" title="\u65e5\u4ed8\u3092\u5909\u66f4\u3067\u304d\u307e\u3059"></td><td>' + (e.person) + '</td><td>' + (getTeam(e.person)||'-') + '</td><td>' + (e.customer) + '</td>\n    <td>' + (e.location||'-') + '</td><td style="text-align:right">' + (e.amount?yen(e.amount):'-') + '</td>\n    <td>' + (phaseBadge(e.phase)) + '</td><td>' + fmtDate(e.lastUpdate||e.date) + '</td>\n    <td style="text-align:center;white-space:nowrap">' + fileCell(e) + '</td>\n    <td style="white-space:nowrap">\n      <button class="btn btn-s" style="padding:3px 8px;font-size:11px" onclick="openPhaseModal(' + (e.id) + ')">\u25b6</button>\n      <button class="btn" style="padding:3px 7px;font-size:11px;background:#fce4ec;color:#c62828;margin-left:3px" onclick="deleteEstimate(' + (e.id) + ')">\ud83d\uddd1\ufe0f</button>\n    </td></tr>\n    ' + (e.phase==='\u5931\u6ce8'?'<tr><td colspan="10"><div class="lost-detail"><strong>\u5931\u6ce8\u7406\u7531:</strong> ' + (e.lostReason||'-') + (e.lostDetail?' / '+e.lostDetail:'') + '</div></td></tr>':'')
   ).join(''):'<tr><td colspan="9" style="text-align:center;color:#999;padding:20px">\u8a72\u5f53\u306a\u3057</td></tr>';
+}
+
+// ====== \u6848\u4ef6\u65e5\u4ed8\u5909\u66f4 ======
+function updateEstDate(id, newDate){
+  if(!newDate) return;
+  var est = DB.estimates.find(function(e){ return e.id === id; });
+  if(!est) return;
+  est.date = newDate;
+  est.lastUpdate = today();
+  saveDB();
+  renderAll();
 }
 
 // ====== \u55b6\u696d\u30c4\u30fc\u30eb ======
@@ -2547,9 +2588,7 @@ function renderCPBanner(){
   DB.estimates.forEach(e => {
     const team = getTeam(e.person) || '\u672a\u6240\u5c5e';
     if(!teamPts.hasOwnProperty(team)) return; // \u672a\u6240\u5c5e\u306f\u8a08\u7b97\u9664\u5916\u3067\u3082OK\u3060\u304c
-    if(e.phase==='\u60c5\u5831\u63d0\u4f9b') teamPts[team]+=ptInfo;
-    else if(e.phase==='\u63d0\u6848\u898b\u7a4d'||e.phase==='\u5b9f\u898b\u7a4d') teamPts[team]+=ptEst;
-    else if(e.phase==='\u5951\u7d04') teamPts[team]+=ptWin;
+    teamPts[team] += calcPhasePts(e.phase, ptInfo, ptEst, ptWin);
   });
   const ranked = Object.entries(teamPts).sort((a,b)=>b[1]-a[1]).slice(0,3); // \u30c8\u30c3\u30d73
   const medals = ['\ud83e\udd47','\ud83e\udd48','\ud83e\udd49'];
@@ -2603,9 +2642,7 @@ function renderTeamRanking(){
   DB.estimates.forEach(e => {
     const team = getTeam(e.person);
     if(team && teamPts.hasOwnProperty(team)) {
-      if(e.phase==='\u60c5\u5831\u63d0\u4f9b') teamPts[team]+=ptInfo;
-      else if(e.phase==='\u63d0\u6848\u898b\u7a4d'||e.phase==='\u5b9f\u898b\u7a4d') teamPts[team]+=ptEst;
-      else if(e.phase==='\u5951\u7d04') teamPts[team]+=ptWin;
+      teamPts[team] += calcPhasePts(e.phase, ptInfo, ptEst, ptWin);
     }
   });
   const ranked = Object.entries(teamPts).sort((a,b)=>b[1]-a[1]);
@@ -2613,7 +2650,7 @@ function renderTeamRanking(){
   const colors = ['#f9a825','#9e9e9e','#bf6e0a','#1a73e8','#0f9d58','#7b1fa2','#e53935','#f57c00','#455a64','#5d4037'];
   const bgColors = ['#fffde7','#f5f5f5','#fff3e0','#e8f0fe','#e8f5e9','#f3e5f5','#fce4ec','#fff3e0','#eceff1','#efebe9'];
   const el = document.getElementById('teamRanking');
-  el.innerHTML = '<h3 style="margin-bottom:8px">\ud83c\udfc6 \u30c1\u30fc\u30e0\u6226 \u8a73\u7d30\u30e9\u30f3\u30ad\u30f3\u30b0</h3>\n    <div style="font-size:11px;color:#999;margin-bottom:12px;background:#f5f7fa;padding:6px;border-radius:6px">\n      \u7372\u5f97\u30eb\u30fc\u30eb\uff1a\u60c5\u5831\u63d0\u4f9b <strong style="color:#42a5f5">' + (ptInfo) + 'pt</strong> / \u898b\u7a4d <strong style="color:#ffa726">' + (ptEst) + 'pt</strong> / \u53d7\u6ce8 <strong style="color:#0f9d58">' + (ptWin) + 'pt</strong>\n    </div>\n    <div style="display:flex;flex-direction:column;gap:6px">\n    ' + (ranked.map(([team,pts],i)=>'\n      <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;\n        border-radius:10px;background:' + (bgColors[i]||'#fff') + ';\n        border-left:4px solid ' + (colors[i]||'#ddd') + ';\n        box-shadow:0 1px 3px rgba(0,0,0,.05)">\n        <span style="font-size:18px;flex-shrink:0;min-width:32px;text-align:center">' + (medals[i]||(i+1+'\u4f4d')) + '</span>\n        <span style="flex:1;font-size:14px;font-weight:700;color:#333">' + (team) + '</span>\n        <span style="font-size:22px;font-weight:800;color:' + (colors[i]||'#555') + '">' + (pts) + '<span style="font-size:12px;font-weight:400;color:#999;margin-left:2px">pt</span></span>\n      </div>').join('')) + '\n    </div>';
+  el.innerHTML = '<h3 style="margin-bottom:8px">\ud83c\udfc6 \u30c1\u30fc\u30e0\u6226 \u8a73\u7d30\u30e9\u30f3\u30ad\u30f3\u30b0</h3>\n    <div style="font-size:11px;color:#999;margin-bottom:12px;background:#f5f7fa;padding:6px;border-radius:6px">\n      \u30dd\u30a4\u30f3\u30c8\uff1a\u60c5\u5831\u63d0\u4f9b <strong style="color:#42a5f5">' + ptInfo + 'pt</strong> / \u63d0\u6848\u898b\u7a4d <strong style="color:#ffa726">' + (ptInfo+ptEst) + 'pt</strong> / \u5b9f\u898b\u7a4d <strong style="color:#e91e63">' + (ptInfo+ptEst+ptEst) + 'pt</strong> / \u5951\u7d04 <strong style="color:#0f9d58">' + (ptInfo+ptEst+ptWin) + 'pt</strong>\uff08\uff0b' + ptWin + '\uff09\n    </div>\n    <div style="display:flex;flex-direction:column;gap:6px">\n    ' + (ranked.map(([team,pts],i)=>'\n      <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;\n        border-radius:10px;background:' + (bgColors[i]||'#fff') + ';\n        border-left:4px solid ' + (colors[i]||'#ddd') + ';\n        box-shadow:0 1px 3px rgba(0,0,0,.05)">\n        <span style="font-size:18px;flex-shrink:0;min-width:32px;text-align:center">' + (medals[i]||(i+1+'\u4f4d')) + '</span>\n        <span style="flex:1;font-size:14px;font-weight:700;color:#333">' + (team) + '</span>\n        <span style="font-size:22px;font-weight:800;color:' + (colors[i]||'#555') + '">' + (pts) + '<span style="font-size:12px;font-weight:400;color:#999;margin-left:2px">pt</span></span>\n      </div>').join('')) + '\n    </div>';
 }
 
 // ====== CP \u30eb\u30fc\u30eb\u30da\u30fc\u30b8 ======
@@ -2796,7 +2833,7 @@ function deleteEstimate(id){
 }
 function initSimulator(){
   const el=document.getElementById('simEstDate');
-  if(el&&!el.value) el.value=new Date().toISOString().slice(0,10);
+  if(el&&!el.value) el.value=today();
 }
 
 // showTab\u306f\u5148\u982dscript\u3067\u5b9a\u7fa9\u6e08\u307f
