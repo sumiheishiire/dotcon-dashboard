@@ -62,11 +62,19 @@ mark.hl{background:#fff9c4;color:inherit;border-radius:2px;padding:0 1px;text-de
 .suggest-chip:hover{background:#e8f0fe;border-color:#1a73e8}
 
 /* 入力エリア */
-#input-area{background:#fff;border-top:2px solid #e0e0e0;padding:12px 16px;display:flex;gap:8px;flex-shrink:0;align-items:center}
-#user-input{flex:1;border:1.5px solid #e0e0e0;border-radius:24px;padding:10px 18px;font-size:13px;outline:none;font-family:inherit;transition:.15s;background:#f5f7fa;color:#333}
-#user-input:focus{border-color:#1a73e8;background:#fff}
+#input-area{background:#fff;border-top:2px solid #e0e0e0;padding:12px 16px;display:flex;flex-direction:column;gap:6px;flex-shrink:0}
+#input-row{display:flex;gap:8px;align-items:center}
+#user-input{flex:1;border:2px solid #e0e0e0;border-radius:24px;padding:10px 18px;font-size:13px;outline:none;font-family:inherit;transition:border-color .3s,box-shadow .3s;background:#f5f7fa;color:#333}
+#user-input:focus{border-color:#1a73e8;background:#fff;box-shadow:0 0 0 3px rgba(26,115,232,.15)}
+#user-input.pulse-input{animation:pulse-border 1.8s ease-in-out infinite}
+@keyframes pulse-border{
+  0%,100%{border-color:#c5d8fb;box-shadow:0 0 0 0 rgba(26,115,232,.0)}
+  50%{border-color:#1a73e8;box-shadow:0 0 0 6px rgba(26,115,232,.18)}
+}
 #send-btn{background:#1a73e8;color:#fff;border:none;border-radius:50%;width:42px;height:42px;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:.15s}
 #send-btn:hover{background:#1558b0;transform:scale(1.05)}
+.input-hint{text-align:center;font-size:12px;color:#1a73e8;font-weight:700;letter-spacing:.02em;animation:bounce-hint 1.2s ease-in-out infinite;display:flex;align-items:center;justify-content:center;gap:5px}
+@keyframes bounce-hint{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
 
 /* タイピング */
 .typing-indicator{display:flex;align-items:center;gap:4px;padding:10px 14px;background:#fff;border-radius:12px;box-shadow:0 1px 4px rgba(0,0,0,.08)}
@@ -113,8 +121,11 @@ mark.hl{background:#fff9c4;color:inherit;border-radius:2px;padding:0 1px;text-de
 </div>
 
 <div id="input-area">
-  <input id="user-input" type="text" placeholder="例：路盤は何cm必要ですか？　大型車は大丈夫ですか？" maxlength="200" />
-  <button id="send-btn" onclick="handleSend()" title="送信">➤</button>
+  <div id="input-hint" class="input-hint">⬇ ここに質問を入力してください</div>
+  <div id="input-row">
+    <input id="user-input" class="pulse-input" type="text" placeholder="例：路盤は何cm必要ですか？　大型車は大丈夫ですか？" maxlength="200" />
+    <button id="send-btn" onclick="handleSend()" title="送信">➤</button>
+  </div>
 </div>
 
 <script>
@@ -528,6 +539,7 @@ function handleSend() {
 }
 
 function categorySearch(cat) {
+  stopHint();
   const items = QA.filter(q => q.cat.includes(cat)).slice(0,3);
   const query = cat + 'について教えてください';
   addUserMessage(query);
@@ -541,6 +553,15 @@ function categorySearch(cat) {
 document.getElementById('user-input').addEventListener('keydown', e => {
   if(e.key==='Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); }
 });
+
+// ヒント・パルス削除（初回入力時）
+function stopHint() {
+  const inp = document.getElementById('user-input');
+  const hint = document.getElementById('input-hint');
+  if(inp) inp.classList.remove('pulse-input');
+  if(hint) { hint.style.transition='opacity .4s'; hint.style.opacity='0'; setTimeout(()=>hint.remove(),400); }
+}
+document.getElementById('user-input').addEventListener('focus', stopHint, {once:true});
 
 // =============================================
 // ウェルカムメッセージ
