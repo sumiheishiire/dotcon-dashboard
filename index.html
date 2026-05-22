@@ -1003,47 +1003,54 @@ function applyMigrations(){
 // ====== \u30af\u30e9\u30a6\u30c9\u30c7\u30fc\u30bf\u53d6\u5f97\u5f8c\u306e\u51e6\u7406 ======
 function onCloudLoaded(json){
   setSyncStatus('');
-  // local count = already filtered by applyMigrations (2026+ only)
   var localCount = DB.estimates ? DB.estimates.length : 0;
+
+  // RULE: if local has data, NEVER overwrite it with cloud. Push local to cloud instead.
+  if(localCount > 0){
+    console.log('[sync] local has '+localCount+' records - keeping local, syncing to cloud');
+    try{ saveDB(); }catch(_e){}
+    finishInit();
+    return;
+  }
+
+  // Local is empty -> try to restore from cloud (only accept 2026-05-01+ data)
   if(json && json.trim() && json.trim() !== 'null'){
     try{
       var cloudDB = JSON.parse(json);
-      // Pre-filter cloud data the same way as local (remove pre-2026 demo data)
-      var cloudEsts = (cloudDB.estimates||[]).map(function(e){
+      var validEntries = (cloudDB.estimates||[]).filter(function(e){
         if(typeof e.date==='number') e.date=new Date(e.date).toISOString().slice(0,10);
-        return e;
-      }).filter(function(e){ return typeof e.date==='string' && e.date>='2026-05-01'; });
-      var cloudCount = cloudEsts.length;
-      if(cloudCount >= localCount && cloudCount > 0){
-        // Cloud has valid 2026+ data >= local -> use cloud
+        return typeof e.date==='string' && e.date>='2026-05-01';
+      });
+      if(validEntries.length > 0){
+        console.log('[sync] restoring '+validEntries.length+' records from cloud');
         DB = cloudDB;
         applyMigrations();
         var merged = JSON.stringify(DB);
         try{ localStorage.setItem(STORAGE_KEY, merged); }catch(e){}
         try{ localStorage.setItem(STORAGE_KEY+'_bak', merged); }catch(e){}
-        console.log('cloud adopted cloud:'+cloudCount+' local:'+localCount);
-      } else if(localCount > 0){
-        // Local has more valid data -> keep local, push to cloud
-        console.log('local kept local:'+localCount+' cloud:'+cloudCount+' pushing to cloud');
-        try{ saveDB(); }catch(_e){}
       } else {
-        // Both empty after filter -> clear cloud too
-        console.log('both empty after filter, clearing cloud demo data');
-        try{ saveDB(); }catch(_e){}
+        console.log('[sync] cloud has no valid 2026+ data - checking _bak');
+        var bak=null; try{bak=localStorage.getItem(STORAGE_KEY+'_bak');}catch(_e){}
+        if(bak){
+          try{
+            var bakDB=JSON.parse(bak);
+            var vb=(bakDB.estimates||[]).filter(function(e){return typeof e.date==='string'&&e.date>='2026-05-01';});
+            if(vb.length>0){DB=bakDB;applyMigrations();try{saveDB();}catch(_e){}}
+            else{initDefaultDB();}
+          }catch(_e){initDefaultDB();}
+        } else {initDefaultDB();}
       }
-    }catch(e){
-      console.warn('cloud parse error',e);
-    }
+    }catch(e){console.warn('cloud parse error',e);}
   } else {
-    // Cloud empty -> push local to cloud if we have data
-    if(localCount > 0){
-      console.log('cloud empty, pushing local to cloud ('+localCount+' records)');
-      try{ saveDB(); }catch(_e){}
-    } else {
-      var bak=null; try{bak=localStorage.getItem(STORAGE_KEY+'_bak');}catch(_e){}
-      if(bak){try{DB=JSON.parse(bak);applyMigrations();try{saveDB();}catch(_e){}}catch(_e){initDefaultDB();}}
-      else{initDefaultDB();}
-    }
+    var bak2=null; try{bak2=localStorage.getItem(STORAGE_KEY+'_bak');}catch(_e){}
+    if(bak2){
+      try{
+        var bakDB2=JSON.parse(bak2);
+        var vb2=(bakDB2.estimates||[]).filter(function(e){return typeof e.date==='string'&&e.date>='2026-05-01';});
+        if(vb2.length>0){DB=bakDB2;applyMigrations();try{saveDB();}catch(_e){}}
+        else{initDefaultDB();}
+      }catch(_e){initDefaultDB();}
+    } else {initDefaultDB();}
   }
   finishInit();
 }
