@@ -1004,22 +1004,39 @@ function applyMigrations(){
 // ====== \u30af\u30e9\u30a6\u30c9\u30c7\u30fc\u30bf\u53d6\u5f97\u5f8c\u306e\u51e6\u7406 ======
 function onCloudLoaded(json){
   setSyncStatus('');
-  if(json){
+  // âéè¦: ã¯ã©ã¦ããå¤ã/ç©ºã§ãã­ã¼ã«ã«ã®æ°ãããã¼ã¿ãä¸æ¸ãããªã
+  var localCount = DB.estimates ? DB.estimates.length : 0;
+  if(json && json.trim() && json.trim() !== 'null'){
     try{
-      DB = JSON.parse(json);
-      applyMigrations();
-      try{ localStorage.setItem(STORAGE_KEY, json); }catch(e){} // \u30ed\u30fc\u30ab\u30eb\u306b\u30ad\u30e3\u30c3\u30b7\u30e5
+      var cloudDB = JSON.parse(json);
+      var cloudCount = (cloudDB.estimates||[]).length;
+      if(cloudCount >= localCount){
+        // ã¯ã©ã¦ãã®æ¹ãä»¶æ°ãå¤ã or åã â ã¯ã©ã¦ããæ¡ç¨ãã¦ã­ã¼ã«ã«ãæ´æ°
+        DB = cloudDB;
+        applyMigrations();
+        var merged = JSON.stringify(DB);
+        try{ localStorage.setItem(STORAGE_KEY, merged); }catch(e){}
+        try{ localStorage.setItem(STORAGE_KEY+'_bak', merged); }catch(e){}
+        console.log('cloud adopted cloud:'+cloudCount+' local:'+localCount);
+      } else {
+        // ã­ã¼ã«ã«ã®æ¹ãä»¶æ°ãå¤ã â ã­ã¼ã«ã«ãç¶´æããã¯ã©ã¦ãã¸æ¸ãæ»ãåæ
+        console.log('local kept local:'+localCount+' > cloud:'+cloudCount+' pushing to cloud');
+        try{ saveDB(); }catch(_e){}
+      }
     }catch(e){
       console.warn('cloud parse error',e);
-      // \u30af\u30e9\u30a6\u30c9\u30c7\u30fc\u30bf\u304c\u58ca\u308c\u3066\u3044\u308b\u2192\u30c7\u30d5\u30a9\u30eb\u30c8\u3067\u521d\u671f\u5316
-      initDefaultDB();
-      // デモデータは生成しない（実データのみ）
+      // ã¯ã©ã¦ããã¼ã¿ãå£ãã¦ãã â ã­ã¼ã«ã«ãç¶´æ（ä½ãããªã）
     }
   } else {
-    // クラウドが空（初回）→ ローカルバックアップ確認、なければ空DB
-    var bak=null; try{bak=localStorage.getItem(STORAGE_KEY+'_bak');}catch(_e){}
-    if(bak){try{DB=JSON.parse(bak);applyMigrations();try{saveDB();}catch(_e){}}catch(_e){initDefaultDB();}}
-    else{initDefaultDB();} // Driveが空でも自動上書きしない
+    // ã¯ã©ã¦ããç©º â ã­ã¼ã«ã«ãã¼ã¿ãã¯ã©ã¦ãã¸ããã¯ã¢ãã
+    if(localCount > 0){
+      console.log('cloud empty, pushing local to cloud ('+localCount+' records)');
+      try{ saveDB(); }catch(_e){}
+    } else {
+      var bak=null; try{bak=localStorage.getItem(STORAGE_KEY+'_bak');}catch(_e){}
+      if(bak){try{DB=JSON.parse(bak);applyMigrations();try{saveDB();}catch(_e){}}catch(_e){initDefaultDB();}}
+      else{initDefaultDB();}
+    }
   }
   finishInit();
 }
