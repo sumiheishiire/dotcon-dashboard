@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>&#x30C9;&#x30C3;&#x30C8;&#x30B3;&#x30F3;CP &#x30C0;&#x30C3;&#x30B7;&#x30E5;&#x30DC;&#x30FC;&#x30C9;</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Segoe UI','Hiragino Sans','Meiryo',sans-serif;background:#f0f2f5;color:#333;line-height:1.6;font-size:14px}
@@ -1400,6 +1401,11 @@ function renderFunnel(){
 }
 
 // ====== \u30b0\u30e9\u30d5 ======
+// datalabels\u30d7\u30e9\u30b0\u30a4\u30f3\u3092\u5168\u30c1\u30e3\u30fc\u30c8\u3067\u6709\u52b9\u5316
+Chart.register(ChartDataLabels);
+// \u30c7\u30d5\u30a9\u30eb\u30c8\u306edatalabels\u8a2d\u5b9a\uff08\u5168\u30c1\u30e3\u30fc\u30c8\u975e\u8868\u793a\u2192\u500b\u5225\u306b\u4e0a\u66f8\u304d\uff09
+Chart.defaults.set('plugins.datalabels', { display: false });
+
 let chartMonthly,chartBar,chartDonut;
 function renderCharts(){
   const data=getFilteredEstimates();
@@ -1414,7 +1420,7 @@ function renderCharts(){
   chartMonthly=new Chart(document.getElementById('chartMonthly'),{
     type:'bar',
     data:{labels:months,datasets:[{label:'\u898b\u7a4d\u4ef6\u6570',data:months.map(m=>monthMap[m]),backgroundColor:'rgba(26,115,232,.7)',borderRadius:6}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{stepSize:1,font:{size:9}}},x:{ticks:{font:{size:9}}}}}
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},datalabels:{display:true,anchor:'end',align:'top',font:{size:9},formatter:v=>v>0?v:''}},scales:{y:{beginAtZero:true,ticks:{stepSize:1,font:{size:9}}},x:{ticks:{font:{size:9}}}}}
   });
 
   // --- \u68d2\u30b0\u30e9\u30d5\uff08\u30d3\u30e5\u30fc\u3067\u5185\u5bb9\u5909\u66f4\uff09 ---
@@ -1428,7 +1434,7 @@ function renderCharts(){
     chartBar=new Chart(document.getElementById('chartBar'),{
       type:'bar',
       data:{labels:entries.map(e=>e[0]),datasets:[{label:'\u4ef6\u6570',data:entries.map(e=>e[1]),backgroundColor:entries.map((_,i)=>'hsl(' + (i*65) + ',60%,52%)'),borderRadius:6}]},
-      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{stepSize:1,font:{size:9}}},x:{ticks:{font:{size:9}}}}}
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},datalabels:{display:true,anchor:'end',align:'top',font:{size:9},formatter:v=>v>0?v:''}},scales:{y:{beginAtZero:true,ticks:{stepSize:1,font:{size:9}}},x:{ticks:{font:{size:9}}}}}
     });
   } else if(currentView==='team'){
     const sel=document.getElementById('viewTeamSelect').value;
@@ -1441,7 +1447,7 @@ function renderCharts(){
       chartBar=new Chart(document.getElementById('chartBar'),{
         type:'bar',
         data:{labels:entries.map(e=>e[0]),datasets:[{label:'\u4ef6\u6570',data:entries.map(e=>e[1]),backgroundColor:entries.map((_,i)=>'hsl(' + (i*50) + ',65%,55%)'),borderRadius:6}]},
-        options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{beginAtZero:true,ticks:{stepSize:1,font:{size:9}}},y:{ticks:{font:{size:9}}}}}
+        options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},datalabels:{display:true,anchor:'end',align:'right',font:{size:9},formatter:v=>v>0?v:''}},scales:{x:{beginAtZero:true,ticks:{stepSize:1,font:{size:9}}},y:{ticks:{font:{size:9}}}}}
       });
     } else {
       // \u5168\u8ab2\u6bd4\u8f03: \u8ab2\u5225\u4ef6\u6570
@@ -1452,7 +1458,7 @@ function renderCharts(){
       chartBar=new Chart(document.getElementById('chartBar'),{
         type:'bar',
         data:{labels:entries.map(e=>e[0]),datasets:[{label:'\u4ef6\u6570',data:entries.map(e=>e[1]),backgroundColor:entries.map((_,i)=>'hsl(' + (i*65) + ',60%,52%)'),borderRadius:6}]},
-        options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{stepSize:1,font:{size:9}}},x:{ticks:{font:{size:9}}}}}
+        options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},datalabels:{display:true,anchor:'end',align:'top',font:{size:9},formatter:v=>v>0?v:''}},scales:{y:{beginAtZero:true,ticks:{stepSize:1,font:{size:9}}},x:{ticks:{font:{size:9}}}}}
       });
     }
   } else {
@@ -1468,7 +1474,7 @@ function renderCharts(){
       chartBar=new Chart(document.getElementById('chartBar'),{
         type:'bar',
         data:{labels:entries.map(e=>e[0]),datasets:[{label:'\u4ef6\u6570',data:entries.map(e=>e[1]),backgroundColor:entries.map(e=>PHASE_COLORS[e[0]]||'#999'),borderRadius:6}]},
-        options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{stepSize:1,font:{size:9}}},x:{ticks:{font:{size:9}}}}}
+        options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},datalabels:{display:true,anchor:'end',align:'top',font:{size:9},formatter:v=>v>0?v:''}},scales:{y:{beginAtZero:true,ticks:{stepSize:1,font:{size:9}}},x:{ticks:{font:{size:9}}}}}
       });
     } else {
       // \u5168\u54e1\u6bd4\u8f03: \u500b\u4eba\u5225\u4ef6\u6570
@@ -1479,71 +1485,87 @@ function renderCharts(){
       chartBar=new Chart(document.getElementById('chartBar'),{
         type:'bar',
         data:{labels:entries.map(e=>e[0]),datasets:[{label:'\u4ef6\u6570',data:entries.map(e=>e[1]),backgroundColor:entries.map((_,i)=>'hsl(' + (i*16) + ',65%,55%)'),borderRadius:6}]},
-        options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{beginAtZero:true,ticks:{stepSize:1,font:{size:9}}},y:{ticks:{font:{size:9}}}}}
+        options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},datalabels:{display:true,anchor:'end',align:'right',font:{size:9},formatter:v=>v>0?v:''}},scales:{x:{beginAtZero:true,ticks:{stepSize:1,font:{size:9}}},y:{ticks:{font:{size:9}}}}}
       });
     }
   }
 
-  // --- \u30c9\u30fc\u30ca\u30c4\uff08\u91d1\u984d\u6bd4\u8f03\uff09 ---
+  // --- \u7a4d\u307f\u4e0a\u3052\u68d2\u30b0\u30e9\u30d5\uff08\u898b\u7a4d\u91d1\u984d\u30fb1\u6848\u4ef6=1\u30bb\u30b0\u30e1\u30f3\u30c8\uff09---
   if(chartDonut)chartDonut.destroy();
-  const DONUT_COLORS=['#42a5f5','#66bb6a','#ffa726','#ab47bc','#26a69a','#ef5350','#78909c','#8d6e63'];
-  if(currentView==='all'){
-    document.getElementById('chartDonutTitle').textContent='\u8ab2\u5225 \u898b\u7a4d\u91d1\u984d';
-    const tMap={};
-    data.forEach(e=>{const t=getTeam(e.person)||'\u672a\u6240\u5c5e';tMap[t]=(tMap[t]||0)+e.amount});
-    const entries=Object.entries(tMap).sort((a,b)=>b[1]-a[1]);
-    chartDonut=new Chart(document.getElementById('chartDonut'),{
-      type:'doughnut',
-      data:{labels:entries.map(e=>e[0]),datasets:[{data:entries.map(e=>e[1]),backgroundColor:DONUT_COLORS}]},
-      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{font:{size:9},boxWidth:10}}}}
+  const STACK_COLORS=['#42a5f5','#66bb6a','#ffa726','#ab47bc','#26a69a','#ef5350','#78909c','#8d6e63','#ec407a','#26c6da'];
+  {
+    // \u30b0\u30eb\u30fc\u30d7\u30e9\u30d9\u30eb\u6c7a\u5b9a
+    let groupKey, titleText;
+    if(currentView==='all'){
+      groupKey='team'; titleText='\u8ab2\u5225 \u898b\u7a4d\u91d1\u984d\uff08\u6848\u4ef6\u7a4d\u307f\u4e0a\u3052\uff09';
+    } else if(currentView==='team'){
+      const sel=document.getElementById('viewTeamSelect').value;
+      groupKey=sel?'person':'team';
+      titleText=sel?sel+' \u500b\u4eba\u5225 \u898b\u7a4d\u91d1\u984d\uff08\u6848\u4ef6\u7a4d\u307f\u4e0a\u3052\uff09':'\u8ab2\u5225 \u898b\u7a4d\u91d1\u984d\uff08\u6848\u4ef6\u7a4d\u307f\u4e0a\u3052\uff09';
+    } else {
+      const sel=document.getElementById('viewPersonSelect').value;
+      groupKey=sel?'phase':'person';
+      titleText=sel?sel+' \u30d5\u30a7\u30fc\u30ba\u5225 \u898b\u7a4d\u91d1\u984d\uff08\u6848\u4ef6\u7a4d\u307f\u4e0a\u3052\uff09':'\u500b\u4eba\u5225 \u898b\u7a4d\u91d1\u984d\uff08\u6848\u4ef6\u7a4d\u307f\u4e0a\u3052\uff09';
+    }
+    document.getElementById('chartDonutTitle').textContent=titleText;
+
+    // \u30b0\u30eb\u30fc\u30d7\u5225\u306b\u6848\u4ef6\u3092\u307e\u3068\u3081\u308b
+    const groups={};
+    data.forEach(e=>{
+      const key=groupKey==='team'?(getTeam(e.person)||'\u672a\u6240\u5c5e'):groupKey==='person'?e.person:e.phase;
+      if(!groups[key]) groups[key]=[];
+      groups[key].push(e);
     });
-  } else if(currentView==='team'){
-    const sel=document.getElementById('viewTeamSelect').value;
-    if(sel){
-      document.getElementById('chartDonutTitle').textContent=sel+' \u500b\u4eba\u5225 \u898b\u7a4d\u91d1\u984d';
-      const pMap={};
-      data.forEach(e=>{pMap[e.person]=(pMap[e.person]||0)+e.amount});
-      const entries=Object.entries(pMap).sort((a,b)=>b[1]-a[1]);
-      chartDonut=new Chart(document.getElementById('chartDonut'),{
-        type:'doughnut',
-        data:{labels:entries.map(e=>e[0]),datasets:[{data:entries.map(e=>e[1]),backgroundColor:DONUT_COLORS}]},
-        options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{font:{size:9},boxWidth:10}}}}
-      });
-    } else {
-      document.getElementById('chartDonutTitle').textContent='\u8ab2\u5225 \u898b\u7a4d\u91d1\u984d\uff08\u6bd4\u8f03\uff09';
-      const tMap={};
-      data.forEach(e=>{const t=getTeam(e.person)||'\u672a\u6240\u5c5e';tMap[t]=(tMap[t]||0)+e.amount});
-      const entries=Object.entries(tMap).sort((a,b)=>b[1]-a[1]);
-      chartDonut=new Chart(document.getElementById('chartDonut'),{
-        type:'doughnut',
-        data:{labels:entries.map(e=>e[0]),datasets:[{data:entries.map(e=>e[1]),backgroundColor:DONUT_COLORS}]},
-        options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{font:{size:9},boxWidth:10}}}}
+    const groupLabels=Object.keys(groups);
+    const maxCases=Math.max(...groupLabels.map(g=>groups[g].length),1);
+
+    // 1\u6848\u4ef6=1\u30c7\u30fc\u30bf\u30bb\u30c3\u30c8\uff08\u7a4d\u307f\u4e0a\u3052\uff09
+    const datasets=[];
+    for(let i=0;i<maxCases;i++){
+      datasets.push({
+        label:'\u6848\u4ef6'+(i+1),
+        data:groupLabels.map(g=>{
+          const est=groups[g][i];
+          return est?(Math.round(est.amount/10000)||0):0;
+        }),
+        backgroundColor:STACK_COLORS[i%STACK_COLORS.length],
+        borderWidth:1,borderColor:'#fff',
+        borderRadius:2,
+        stack:'amount',
+        // tooltip\u7528\u306bcustomer\u540d\u3092\u4fdd\u6301
+        _customers:groupLabels.map(g=>groups[g][i]?groups[g][i].customer:'')
       });
     }
-  } else {
-    const sel=document.getElementById('viewPersonSelect').value;
-    if(sel){
-      document.getElementById('chartDonutTitle').textContent=sel+' \u30d5\u30a7\u30fc\u30ba\u5225 \u91d1\u984d';
-      const phMap={};
-      [...PHASE_ORDER,'\u5931\u6ce8'].forEach(p=>phMap[p]=0);
-      data.forEach(e=>{phMap[e.phase]=(phMap[e.phase]||0)+e.amount});
-      const entries=Object.entries(phMap).filter(e=>e[1]>0);
-      chartDonut=new Chart(document.getElementById('chartDonut'),{
-        type:'doughnut',
-        data:{labels:entries.map(e=>e[0]),datasets:[{data:entries.map(e=>e[1]),backgroundColor:entries.map(e=>PHASE_COLORS[e[0]]||'#999')}]},
-        options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{font:{size:9},boxWidth:10}}}}
-      });
-    } else {
-      document.getElementById('chartDonutTitle').textContent='\u500b\u4eba\u5225 \u898b\u7a4d\u91d1\u984d';
-      const pMap={};
-      data.forEach(e=>{pMap[e.person]=(pMap[e.person]||0)+e.amount});
-      const entries=Object.entries(pMap).sort((a,b)=>b[1]-a[1]);
-      chartDonut=new Chart(document.getElementById('chartDonut'),{
-        type:'doughnut',
-        data:{labels:entries.map(e=>e[0]),datasets:[{data:entries.map(e=>e[1]),backgroundColor:entries.map((_,i)=>DONUT_COLORS[i%DONUT_COLORS.length])}]},
-        options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{font:{size:9},boxWidth:10}}}}
-      });
-    }
+    chartDonut=new Chart(document.getElementById('chartDonut'),{
+      type:'bar',
+      data:{labels:groupLabels,datasets},
+      options:{
+        responsive:true,maintainAspectRatio:false,
+        plugins:{
+          legend:{display:false},
+          tooltip:{callbacks:{
+            label:ctx=>{
+              const v=ctx.parsed.y;
+              const cust=ctx.dataset._customers[ctx.dataIndex];
+              return v>0?(cust?cust+': ':'')+'\u00a5'+Number(v*10000).toLocaleString():'';
+            }
+          }},
+          datalabels:{
+            display:ctx=>ctx.parsed.y>0,
+            anchor:'center',align:'center',
+            font:{size:8},color:'#fff',
+            formatter:(v,ctx)=>{
+              const cust=ctx.dataset._customers[ctx.dataIndex];
+              return v>0?(cust||Math.round(v)+'\u4e07'):'';
+            }
+          }
+        },
+        scales:{
+          x:{stacked:true,ticks:{font:{size:9}}},
+          y:{stacked:true,beginAtZero:true,ticks:{font:{size:9},callback:v=>v+'\u4e07'}}
+        }
+      }
+    });
   }
 
   // \u2500\u2500 \u30d5\u30a7\u30fc\u30ba\u5225\u8ee2\u63db\u7387\u30b0\u30e9\u30d5\uff08\u5e38\u306b\u8868\u793a\uff09 \u2500\u2500
@@ -1575,7 +1597,8 @@ function renderCharts(){
       responsive:true,maintainAspectRatio:false,
       plugins:{
         legend:{display:false},
-        tooltip:{callbacks:{label:ctx=>'\u8ee2\u63db\u7387: ' + (ctx.parsed.y) + '%'}}
+        tooltip:{callbacks:{label:ctx=>'\u8ee2\u63db\u7387: ' + ctx.parsed.y + '%'}},
+        datalabels:{display:true,anchor:'end',align:'top',font:{size:9,weight:'bold'},formatter:v=>v>0?v+'%':'',color:'#333'}
       },
       scales:{
         y:{beginAtZero:true,max:100,ticks:{callback:v=>v+'%',font:{size:9}},grid:{color:'#f0f0f0'}},
