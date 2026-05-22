@@ -985,6 +985,10 @@ function applyMigrations(){
     }
     return e;
   });
+  // Remove pre-2026-05-01 demo data (2025 entries etc)
+  DB.estimates = DB.estimates.filter(function(e){
+    return typeof e.date === 'string' && e.date >= '2026-05-01';
+  });
   const dc = DEFAULT_DATA.config;
   ['startDate','endDate','alertDays','monthlyInfo','monthlyEstimate','convRateTarget','quoPerWin','ptInfo','ptEstimate','ptWin','qaAdminPw','adminPw','toolUrls']
     .forEach(k=>{ if(DB.config[k]===undefined) DB.config[k]=dc[k]; });
@@ -999,31 +1003,39 @@ function applyMigrations(){
 // ====== \u30af\u30e9\u30a6\u30c9\u30c7\u30fc\u30bf\u53d6\u5f97\u5f8c\u306e\u51e6\u7406 ======
 function onCloudLoaded(json){
   setSyncStatus('');
-  // âéè¦: ã¯ã©ã¦ããå¤ã/ç©ºã§ãã­ã¼ã«ã«ã®æ°ãããã¼ã¿ãä¸æ¸ãããªã
+  // local count = already filtered by applyMigrations (2026+ only)
   var localCount = DB.estimates ? DB.estimates.length : 0;
   if(json && json.trim() && json.trim() !== 'null'){
     try{
       var cloudDB = JSON.parse(json);
-      var cloudCount = (cloudDB.estimates||[]).length;
-      if(cloudCount >= localCount){
-        // ã¯ã©ã¦ãã®æ¹ãä»¶æ°ãå¤ã or åã â ã¯ã©ã¦ããæ¡ç¨ãã¦ã­ã¼ã«ã«ãæ´æ°
+      // Pre-filter cloud data the same way as local (remove pre-2026 demo data)
+      var cloudEsts = (cloudDB.estimates||[]).map(function(e){
+        if(typeof e.date==='number') e.date=new Date(e.date).toISOString().slice(0,10);
+        return e;
+      }).filter(function(e){ return typeof e.date==='string' && e.date>='2026-05-01'; });
+      var cloudCount = cloudEsts.length;
+      if(cloudCount >= localCount && cloudCount > 0){
+        // Cloud has valid 2026+ data >= local -> use cloud
         DB = cloudDB;
         applyMigrations();
         var merged = JSON.stringify(DB);
         try{ localStorage.setItem(STORAGE_KEY, merged); }catch(e){}
         try{ localStorage.setItem(STORAGE_KEY+'_bak', merged); }catch(e){}
         console.log('cloud adopted cloud:'+cloudCount+' local:'+localCount);
+      } else if(localCount > 0){
+        // Local has more valid data -> keep local, push to cloud
+        console.log('local kept local:'+localCount+' cloud:'+cloudCount+' pushing to cloud');
+        try{ saveDB(); }catch(_e){}
       } else {
-        // ã­ã¼ã«ã«ã®æ¹ãä»¶æ°ãå¤ã â ã­ã¼ã«ã«ãç¶´æããã¯ã©ã¦ãã¸æ¸ãæ»ãåæ
-        console.log('local kept local:'+localCount+' > cloud:'+cloudCount+' pushing to cloud');
+        // Both empty after filter -> clear cloud too
+        console.log('both empty after filter, clearing cloud demo data');
         try{ saveDB(); }catch(_e){}
       }
     }catch(e){
       console.warn('cloud parse error',e);
-      // ã¯ã©ã¦ããã¼ã¿ãå£ãã¦ãã â ã­ã¼ã«ã«ãç¶´æ（ä½ãããªã）
     }
   } else {
-    // ã¯ã©ã¦ããç©º â ã­ã¼ã«ã«ãã¼ã¿ãã¯ã©ã¦ãã¸ããã¯ã¢ãã
+    // Cloud empty -> push local to cloud if we have data
     if(localCount > 0){
       console.log('cloud empty, pushing local to cloud ('+localCount+' records)');
       try{ saveDB(); }catch(_e){}
