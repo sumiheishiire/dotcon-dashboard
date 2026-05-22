@@ -376,24 +376,22 @@ function checkPw(){}
     <div id="funnelChart"></div>
   </div>
 
-  <div class="grid-2">
-    <div class="card">
-      <h3 id="chartMonthlyTitle">&#x6708;&#x5225;&#x898B;&#x7A4D;&#x63A8;&#x79FB;</h3>
-      <canvas id="chartMonthly" height="220"></canvas>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px">
+    <div class="card" style="padding:12px">
+      <h3 id="chartMonthlyTitle" style="font-size:12px;margin-bottom:6px">&#x6708;&#x5225;&#x898B;&#x7A4D;&#x63A8;&#x79FB;</h3>
+      <canvas id="chartMonthly" height="110"></canvas>
     </div>
-    <div class="card">
-      <h3 id="chartBarTitle">&#x4EF6;&#x6570;&#x6BD4;&#x8F03;</h3>
-      <canvas id="chartBar" height="220"></canvas>
+    <div class="card" style="padding:12px">
+      <h3 id="chartBarTitle" style="font-size:12px;margin-bottom:6px">&#x4EF6;&#x6570;&#x6BD4;&#x8F03;</h3>
+      <canvas id="chartBar" height="110"></canvas>
     </div>
-  </div>
-  <div class="grid-2">
-    <div class="card">
-      <h3 id="chartDonutTitle">&#x91D1;&#x984D;&#x6BD4;&#x8F03;</h3>
-      <canvas id="chartDonut" height="220"></canvas>
+    <div class="card" style="padding:12px">
+      <h3 id="chartDonutTitle" style="font-size:12px;margin-bottom:6px">&#x91D1;&#x984D;&#x6BD4;&#x8F03;</h3>
+      <canvas id="chartDonut" height="110"></canvas>
     </div>
-    <div class="card">
-      <h3>&#x30D5;&#x30A7;&#x30FC;&#x30BA;&#x5225; &#x53D7;&#x6CE8;&#x7387;&#x30FB;&#x8EE2;&#x63DB;&#x7387;</h3>
-      <canvas id="chartConv" height="220"></canvas>
+    <div class="card" style="padding:12px">
+      <h3 style="font-size:12px;margin-bottom:6px">&#x30D5;&#x30A7;&#x30FC;&#x30BA;&#x5225; &#x53D7;&#x6CE8;&#x7387;&#x30FB;&#x8EE2;&#x63DB;&#x7387;</h3>
+      <canvas id="chartConv" height="110"></canvas>
     </div>
   </div>
 </div>
@@ -1416,7 +1414,7 @@ function renderCharts(){
   chartMonthly=new Chart(document.getElementById('chartMonthly'),{
     type:'bar',
     data:{labels:months,datasets:[{label:'\u898b\u7a4d\u4ef6\u6570',data:months.map(m=>monthMap[m]),backgroundColor:'rgba(26,115,232,.7)',borderRadius:6}]},
-    options:{responsive:true,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{stepSize:1}}}}
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{stepSize:1,font:{size:9}}},x:{ticks:{font:{size:9}}}}}
   });
 
   // --- \u68d2\u30b0\u30e9\u30d5\uff08\u30d3\u30e5\u30fc\u3067\u5185\u5bb9\u5909\u66f4\uff09 ---
@@ -1430,7 +1428,7 @@ function renderCharts(){
     chartBar=new Chart(document.getElementById('chartBar'),{
       type:'bar',
       data:{labels:entries.map(e=>e[0]),datasets:[{label:'\u4ef6\u6570',data:entries.map(e=>e[1]),backgroundColor:entries.map((_,i)=>'hsl(' + (i*65) + ',60%,52%)'),borderRadius:6}]},
-      options:{responsive:true,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{stepSize:1}}}}
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{stepSize:1,font:{size:9}}},x:{ticks:{font:{size:9}}}}}
     });
   } else if(currentView==='team'){
     const sel=document.getElementById('viewTeamSelect').value;
@@ -1443,7 +1441,7 @@ function renderCharts(){
       chartBar=new Chart(document.getElementById('chartBar'),{
         type:'bar',
         data:{labels:entries.map(e=>e[0]),datasets:[{label:'\u4ef6\u6570',data:entries.map(e=>e[1]),backgroundColor:entries.map((_,i)=>'hsl(' + (i*50) + ',65%,55%)'),borderRadius:6}]},
-        options:{indexAxis:'y',responsive:true,plugins:{legend:{display:false}},scales:{x:{beginAtZero:true,ticks:{stepSize:1}}}}
+        options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{beginAtZero:true,ticks:{stepSize:1,font:{size:9}}},y:{ticks:{font:{size:9}}}}}
       });
     } else {
       // \u5168\u8ab2\u6bd4\u8f03: \u8ab2\u5225\u4ef6\u6570
@@ -1454,7 +1452,7 @@ function renderCharts(){
       chartBar=new Chart(document.getElementById('chartBar'),{
         type:'bar',
         data:{labels:entries.map(e=>e[0]),datasets:[{label:'\u4ef6\u6570',data:entries.map(e=>e[1]),backgroundColor:entries.map((_,i)=>'hsl(' + (i*65) + ',60%,52%)'),borderRadius:6}]},
-        options:{responsive:true,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{stepSize:1}}}}
+        options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{stepSize:1,font:{size:9}}},x:{ticks:{font:{size:9}}}}}
       });
     }
   } else {
@@ -1470,7 +1468,7 @@ function renderCharts(){
       chartBar=new Chart(document.getElementById('chartBar'),{
         type:'bar',
         data:{labels:entries.map(e=>e[0]),datasets:[{label:'\u4ef6\u6570',data:entries.map(e=>e[1]),backgroundColor:entries.map(e=>PHASE_COLORS[e[0]]||'#999'),borderRadius:6}]},
-        options:{responsive:true,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{stepSize:1}}}}
+        options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{stepSize:1,font:{size:9}}},x:{ticks:{font:{size:9}}}}}
       });
     } else {
       // \u5168\u54e1\u6bd4\u8f03: \u500b\u4eba\u5225\u4ef6\u6570
@@ -1481,7 +1479,7 @@ function renderCharts(){
       chartBar=new Chart(document.getElementById('chartBar'),{
         type:'bar',
         data:{labels:entries.map(e=>e[0]),datasets:[{label:'\u4ef6\u6570',data:entries.map(e=>e[1]),backgroundColor:entries.map((_,i)=>'hsl(' + (i*16) + ',65%,55%)'),borderRadius:6}]},
-        options:{indexAxis:'y',responsive:true,plugins:{legend:{display:false}},scales:{x:{beginAtZero:true,ticks:{stepSize:1}}}}
+        options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{beginAtZero:true,ticks:{stepSize:1,font:{size:9}}},y:{ticks:{font:{size:9}}}}}
       });
     }
   }
@@ -1497,7 +1495,7 @@ function renderCharts(){
     chartDonut=new Chart(document.getElementById('chartDonut'),{
       type:'doughnut',
       data:{labels:entries.map(e=>e[0]),datasets:[{data:entries.map(e=>e[1]),backgroundColor:DONUT_COLORS}]},
-      options:{responsive:true,plugins:{legend:{position:'bottom',labels:{font:{size:12}}}}}
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{font:{size:9},boxWidth:10}}}}
     });
   } else if(currentView==='team'){
     const sel=document.getElementById('viewTeamSelect').value;
@@ -1509,7 +1507,7 @@ function renderCharts(){
       chartDonut=new Chart(document.getElementById('chartDonut'),{
         type:'doughnut',
         data:{labels:entries.map(e=>e[0]),datasets:[{data:entries.map(e=>e[1]),backgroundColor:DONUT_COLORS}]},
-        options:{responsive:true,plugins:{legend:{position:'bottom',labels:{font:{size:12}}}}}
+        options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{font:{size:9},boxWidth:10}}}}
       });
     } else {
       document.getElementById('chartDonutTitle').textContent='\u8ab2\u5225 \u898b\u7a4d\u91d1\u984d\uff08\u6bd4\u8f03\uff09';
@@ -1519,7 +1517,7 @@ function renderCharts(){
       chartDonut=new Chart(document.getElementById('chartDonut'),{
         type:'doughnut',
         data:{labels:entries.map(e=>e[0]),datasets:[{data:entries.map(e=>e[1]),backgroundColor:DONUT_COLORS}]},
-        options:{responsive:true,plugins:{legend:{position:'bottom',labels:{font:{size:12}}}}}
+        options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{font:{size:9},boxWidth:10}}}}
       });
     }
   } else {
@@ -1533,7 +1531,7 @@ function renderCharts(){
       chartDonut=new Chart(document.getElementById('chartDonut'),{
         type:'doughnut',
         data:{labels:entries.map(e=>e[0]),datasets:[{data:entries.map(e=>e[1]),backgroundColor:entries.map(e=>PHASE_COLORS[e[0]]||'#999')}]},
-        options:{responsive:true,plugins:{legend:{position:'bottom',labels:{font:{size:12}}}}}
+        options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{font:{size:9},boxWidth:10}}}}
       });
     } else {
       document.getElementById('chartDonutTitle').textContent='\u500b\u4eba\u5225 \u898b\u7a4d\u91d1\u984d';
@@ -1543,7 +1541,7 @@ function renderCharts(){
       chartDonut=new Chart(document.getElementById('chartDonut'),{
         type:'doughnut',
         data:{labels:entries.map(e=>e[0]),datasets:[{data:entries.map(e=>e[1]),backgroundColor:entries.map((_,i)=>DONUT_COLORS[i%DONUT_COLORS.length])}]},
-        options:{responsive:true,plugins:{legend:{position:'bottom',labels:{font:{size:11}}}}}
+        options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{font:{size:9},boxWidth:10}}}}
       });
     }
   }
@@ -1574,14 +1572,14 @@ function renderCharts(){
       }]
     },
     options:{
-      responsive:true,
+      responsive:true,maintainAspectRatio:false,
       plugins:{
         legend:{display:false},
         tooltip:{callbacks:{label:ctx=>'\u8ee2\u63db\u7387: ' + (ctx.parsed.y) + '%'}}
       },
       scales:{
-        y:{beginAtZero:true,max:100,ticks:{callback:v=>v+'%'},grid:{color:'#f0f0f0'}},
-        x:{grid:{display:false}}
+        y:{beginAtZero:true,max:100,ticks:{callback:v=>v+'%',font:{size:9}},grid:{color:'#f0f0f0'}},
+        x:{grid:{display:false},ticks:{font:{size:9}}}
       }
     }
   });
