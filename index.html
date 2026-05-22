@@ -985,11 +985,6 @@ function applyMigrations(){
     }
     return e;
   });
-  var before = DB.estimates.length;
-  DB.estimates = DB.estimates.filter(function(e){
-    return typeof e.date === 'string' && e.date >= '2026-05-01';
-  });
-  if(DB.estimates.length < before) console.log('期間外データ削除:', (before - DB.estimates.length) + '件');
   const dc = DEFAULT_DATA.config;
   ['startDate','endDate','alertDays','monthlyInfo','monthlyEstimate','convRateTarget','quoPerWin','ptInfo','ptEstimate','ptWin','qaAdminPw','adminPw','toolUrls']
     .forEach(k=>{ if(DB.config[k]===undefined) DB.config[k]=dc[k]; });
@@ -1064,7 +1059,7 @@ function loadDB(){
   // \u2460 \u307e\u305a\u30ed\u30fc\u30ab\u30eb/\u30c7\u30e2\u30c7\u30fc\u30bf\u3067\u5373\u6642\u63cf\u753b
   let raw=null;
   try{ raw=localStorage.getItem(STORAGE_KEY); }catch(e){}
-  if(raw){ try{ DB=JSON.parse(raw); applyMigrations(); }catch(e){ initDefaultDB(); } }
+  if(raw){ try{ DB=JSON.parse(raw); }catch(e){ initDefaultDB(); } try{ applyMigrations(); }catch(e){ console.warn('migration warn',e); } }
   else { initDefaultDB(); }
   // \u2605 \u5373\u5ea7\u306b\u63cf\u753b\uff08\u30af\u30e9\u30a6\u30c9\u5f85\u3061\u30bc\u30ed\uff09
   finishInit();
