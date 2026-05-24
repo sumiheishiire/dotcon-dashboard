@@ -1076,10 +1076,16 @@ function setSyncStatus(msg,timeout){
 // ====== \u30c7\u30fc\u30bf\u8aad\u307f\u8fbc\u307f\uff08\u5373\u6642\u63cf\u753b \u2192 \u30af\u30e9\u30a6\u30c9\u66f4\u65b0\uff09 ======
 function loadDB(){
   // \u2460 \u307e\u305a\u30ed\u30fc\u30ab\u30eb/\u30c7\u30e2\u30c7\u30fc\u30bf\u3067\u5373\u6642\u63cf\u753b
+  // Load from localStorage with 3-layer fallback
   let raw=null;
   try{ raw=localStorage.getItem(STORAGE_KEY); }catch(e){}
-  if(raw){ try{ DB=JSON.parse(raw); }catch(e){ initDefaultDB(); } try{ applyMigrations(); }catch(e){ console.warn('migration warn',e); } }
-  else { initDefaultDB(); }
+  if(!raw){ try{ raw=localStorage.getItem(STORAGE_KEY+'_bak'); }catch(e){} }
+  if(!raw){ try{ raw=localStorage.getItem(STORAGE_KEY+'_bak2'); }catch(e){} }
+  if(raw){
+    try{ DB=JSON.parse(raw); }catch(e){ raw=null; }
+    if(raw){ try{ applyMigrations(); }catch(e){ console.warn('migration warn',e); } }
+    else { initDefaultDB(); }
+  } else { initDefaultDB(); }
   // \u2605 \u5373\u5ea7\u306b\u63cf\u753b\uff08\u30af\u30e9\u30a6\u30c9\u5f85\u3061\u30bc\u30ed\uff09
   finishInit();
 
@@ -1101,22 +1107,42 @@ function loadDB(){
 
 // ====== \u30c7\u30fc\u30bf\u4fdd\u5b58\uff08\u30ed\u30fc\u30ab\u30eb\u5373\u6642\u4fdd\u5b58 \uff0b \u30af\u30e9\u30a6\u30c9\u3078\u975e\u540c\u671f\uff09 ======
 function saveDB(){
-  const json=JSON.stringify(DB);
-  try{ localStorage.setItem(STORAGE_KEY, json); }catch(e){} // \u30ed\u30fc\u30ab\u30eb\u5373\u6642\uff08GAS\u30b5\u30f3\u30c9\u30dc\u30c3\u30af\u30b9\u3067\u306f\u5931\u6557\u3057\u3066\u3082OK\uff09
+  const json = JSON.stringify(DB);
+  const ts = new Date().toISOString();
+
+  // [1] Primary localStorage (immediate)
+  try{ localStorage.setItem(STORAGE_KEY, json); }catch(e){}
+  // [2] Backup key 1
+  try{ localStorage.setItem(STORAGE_KEY+'_bak', json); }catch(e){}
+  // [3] Backup key 2 with timestamp (rotating, keep latest)
+  try{ localStorage.setItem(STORAGE_KEY+'_bak2', json); }catch(e){}
+  try{ localStorage.setItem(STORAGE_KEY+'_baktime', ts); }catch(e){}
+
   if(typeof google!=='undefined'&&google.script&&google.script.run){
-    // \u2460 GAS\u914d\u4fe1\u6642
+    // GAS webapp mode
     google.script.run
-      .withSuccessHandler(()=>setSyncStatus('\u2713 \u4fdd\u5b58',2000))
-      .withFailureHandler(()=>setSyncStatus('\u26a0\ufe0f \u4fdd\u5b58\u5931\u6557'))
+      .withSuccessHandler(()=>setSyncStatus('\u2713 \u4fdd\u5b58',3000))
+      .withFailureHandler(()=>setSyncStatus('\u26a0\ufe0f GAS\u4fdd\u5b58\u5931\u6557'))
       .saveData(json);
   } else if(GAS_API_URL){
-    // \u2461 OneDrive/\u30ed\u30fc\u30ab\u30eb\u30d5\u30a1\u30a4\u30eb\u6642: fetch POST (no-cors = \u30ec\u30b9\u30dd\u30f3\u30b9\u4e0d\u8981)
+    // GitHub Pages mode: fetch with CORS (so we can detect failures)
     setSyncStatus('\u23f3');
-    // ローカルに2重バックアップ（別キー）
-    try{ localStorage.setItem(STORAGE_KEY+'_bak', json); }catch(e){}
-    fetch(GAS_API_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:json})
-      .then(()=>setSyncStatus('\u2713 \u4fdd\u5b58',2000))
-      .catch(()=>setSyncStatus('\u26a0\ufe0f \u4fdd\u5b58\u5931\u6557'));
+    fetch(GAS_API_URL, {
+      method:'POST',
+      headers:{'Content-Type':'text/plain'},
+      body: json
+    })
+    .then(r => {
+      if(r.ok || r.type==='opaque'){
+        setSyncStatus('\u2713 \u30af\u30e9\u30a6\u30c9\u4fdd\u5b58\u5b8c\u4e86', 3000);
+      } else {
+        setSyncStatus('\u26a0\ufe0f GAS\u4fdd\u5b58\u5931\u6557('+r.status+')');
+      }
+    })
+    .catch(()=>{
+      // CORS error or network error - data is still safe in localStorage
+      setSyncStatus('\u2713 \u30ed\u30fc\u30ab\u30eb\u4fdd\u5b58\u6e08 (\u30af\u30e9\u30a6\u30c9\u5931\u6557)', 4000);
+    });
   }
 }
 
