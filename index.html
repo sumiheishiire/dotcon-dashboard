@@ -359,10 +359,10 @@ function checkPw(){}
       <button class="btn btn-s view-toggle active" data-view="all" onclick="switchView('all',this)">&#x5168;&#x4F53;</button>
       <button class="btn btn-s view-toggle" data-view="team" onclick="switchView('team',this)">&#x8AB2;&#x5225;</button>
       <button class="btn btn-s view-toggle" data-view="person" onclick="switchView('person',this)">&#x500B;&#x4EBA;&#x5225;</button>
-      <select id="viewTeamSelect" class="stage-sel" style="display:none;margin-left:4px" onchange="renderCharts()">
+      <select id="viewTeamSelect" class="stage-sel" style="display:none;margin-left:4px" onchange="renderFunnel();renderCharts();renderKPI();">
         <option value="">&#x8AB2;&#x3092;&#x9078;&#x629E;</option>
       </select>
-      <select id="viewPersonSelect" class="stage-sel" style="display:none;margin-left:4px" onchange="renderCharts()">
+      <select id="viewPersonSelect" class="stage-sel" style="display:none;margin-left:4px" onchange="renderFunnel();renderCharts();renderKPI();">
         <option value="">&#x500B;&#x4EBA;&#x3092;&#x9078;&#x629E;</option>
       </select>
     </div>
@@ -1290,7 +1290,7 @@ function renderFeed(){
 
 // ====== KPI ======
 function renderKPI(){
-  const e=DB.estimates;
+  const e=getFilteredEstimates();
   // \u5931\u6ce8\u306f\u5225\u30ab\u30a6\u30f3\u30c8
   const lostCnt=e.filter(x=>x.phase==='\u5931\u6ce8').length;
   // \u6709\u52b9\u306a\u6848\u4ef6\uff08\u5931\u6ce8\u4ee5\u5916\u3059\u3079\u3066\u3002\u60c5\u5831\u63d0\u4f9b\u30fb\u63d0\u6848\u898b\u7a4d\u30fb\u5b9f\u898b\u7a4d\u30fb\u5951\u7d04\uff09
@@ -1337,7 +1337,7 @@ function switchView(view, btn){
   if(view==='person'){
     ps.innerHTML='<option value="">\u5168\u54e1\u3092\u6bd4\u8f03</option>'+DB.members.map(m=>'<option>' + (m.name) + '</option>').join('');
   }
-  renderFunnel();renderCharts();
+  renderFunnel();renderCharts();renderKPI();
 }
 
 // \u30d5\u30a3\u30eb\u30bf\u3055\u308c\u305f\u898b\u7a4d\u3092\u53d6\u5f97
