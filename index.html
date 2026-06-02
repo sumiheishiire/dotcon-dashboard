@@ -271,8 +271,18 @@ function checkPw(){}
     <span id="syncStatus" style="font-size:11px;color:#aaa;min-width:60px;text-align:right"></span>
     <select id="myNameSelect" onchange="setMyName(this.value)" style="font-size:12px;padding:4px 8px;border:1px solid rgba(255,255,255,.4);background:rgba(255,255,255,.15);color:#fff;border-radius:6px;cursor:pointer"><option value="">&#x81EA;&#x5206;&#x306E;&#x540D;&#x524D;</option></select>
     <span style="font-size:13px" id="userName">--</span>
-    <a href="dotcon_flyer.html" target="_blank" class="btn-upload" style="background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.4);text-decoration:none"><span>📄</span> チラシ</a><button class="btn-upload" onclick="openEstimateModal()"><span>+</span> &#x6848;&#x4EF6;&#x3092;&#x767B;&#x9332;</button>
+    <a href="dotcon_case_202606.pdf" target="_blank" class="btn-upload" style="background:#e65100;color:#fff;border:none;text-decoration:none;position:relative;gap:4px;"><span style="position:absolute;top:-7px;right:-7px;background:#fff;color:#e65100;font-size:8px;font-weight:900;padding:1px 4px;border-radius:3px;line-height:1.4;border:1px solid #e65100;">NEW</span>📄 施工事例</a><a href="dotcon_flyer.html" target="_blank" class="btn-upload" style="background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.4);text-decoration:none"><span>📄</span> チラシ</a><button class="btn-upload" onclick="openEstimateModal()"><span>+</span> &#x6848;&#x4EF6;&#x3092;&#x767B;&#x9332;</button>
   </div>
+</div>
+
+<!-- UPDATE BANNER 2026-06-02 -->
+<div id="updateBanner" style="background:linear-gradient(90deg,#0d47a1,#1565c0);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:8px 20px;font-size:12px;gap:12px;flex-wrap:wrap;">
+  <div style="display:flex;align-items:center;gap:10px;">
+    <span style="background:#ff6f00;color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:3px;letter-spacing:.5px;flex-shrink:0;">NEW</span>
+    <span style="color:rgba(255,255,255,.92)">【2026.06.02】　施工事例資料（PDF）12ヺージ）を営業ツールに追加しました。</span>
+    <a href="dotcon_case_202606.pdf" target="_blank" style="color:#90caf9;font-weight:600;text-decoration:underline;font-size:12px;white-space:nowrap;">開く &rarr;</a>
+  </div>
+  <button onclick="document.getElementById('updateBanner').style.display='none'" style="background:none;border:none;color:rgba(255,255,255,.5);cursor:pointer;font-size:18px;line-height:1;padding:0 4px;flex-shrink:0;">&times;</button>
 </div>
 
 <div class="notif-panel" id="notifPanel">
@@ -1738,6 +1748,15 @@ function updateEstDate(id, newDate){
 // ====== \u55b6\u696d\u30c4\u30fc\u30eb ======
 // \u2605 url\u6b04\u306bOneDrive/SharePoint\u306e\u5171\u6709\u30ea\u30f3\u30af\u3092\u8cbc\u3063\u3066\u304f\u3060\u3055\u3044
 const TOOLS = [
+  // NEW 2026-06-02 施工事例
+  {
+    cat:'photo', type:'pdf', icon:'📸',
+    color:'#fff8e1', border:'#f9a825',
+    title:'施工事例（信州） 2026.06',
+    desc:'住宅アプローチ・ドライブウェイ。グッドデザイン賞金賞×Red Dot受賞製品の実施事例（12ヺージ）',
+    badge:'NEW', badgeColor:'#ff6f00',
+    url:'https://sumiheishiire.github.io/dotcon-dashboard/dotcon_case_202606.pdf'
+  },
   // \u2500\u2500 \u30ab\u30bf\u30ed\u30b0\u30fb\u30c1\u30e9\u30b7 \u2500\u2500
   {
     cat:'catalog', type:'pdf', icon:'\ud83d\udccb',
