@@ -1152,55 +1152,68 @@ function applyMigrations(){
 // ====== \u30af\u30e9\u30a6\u30c9\u30c7\u30fc\u30bf\u53d6\u5f97\u5f8c\u306e\u51e6\u7406 ======
 function onCloudLoaded(json){
   setSyncStatus('');
-  var localCount = DB.estimates ? DB.estimates.length : 0;
-
-  // RULE: if local has data, NEVER overwrite it with cloud. Push local to cloud instead.
-  if(localCount > 0){
-    console.log('[sync] local has '+localCount+' records - keeping local, syncing to cloud');
-    try{ saveDB(); }catch(_e){}
-    finishInit();
-    return;
+  // クラウドJSONをパース
+  var cloudDB=null;
+  if(json && String(json).trim() && String(json).trim()!=='null'){
+    try{ cloudDB=JSON.parse(json); }catch(e){ cloudDB=null; }
   }
 
-  // Local is empty -> try to restore from cloud (only accept 2026-05-01+ data)
-  if(json && json.trim() && json.trim() !== 'null'){
-    try{
-      var cloudDB = JSON.parse(json);
-      var validEntries = (cloudDB.estimates||[]).filter(function(e){
-        if(typeof e.date==='number') e.date=new Date(e.date).toISOString().slice(0,10);
-        return typeof e.date==='string' && e.date>='2026-05-01';
-      });
-      if(validEntries.length > 0){
-        console.log('[sync] restoring '+validEntries.length+' records from cloud');
-        DB = cloudDB;
-        applyMigrations();
-        var merged = JSON.stringify(DB);
-        try{ localStorage.setItem(STORAGE_KEY, merged); }catch(e){}
-        try{ localStorage.setItem(STORAGE_KEY+'_bak', merged); }catch(e){}
-      } else {
-        console.log('[sync] cloud has no valid 2026+ data - checking _bak');
-        var bak=null; try{bak=localStorage.getItem(STORAGE_KEY+'_bak');}catch(_e){}
-        if(bak){
-          try{
-            var bakDB=JSON.parse(bak);
-            var vb=(bakDB.estimates||[]).filter(function(e){return typeof e.date==='string'&&e.date>='2026-05-01';});
-            if(vb.length>0){DB=bakDB;applyMigrations();try{saveDB();}catch(_e){}}
-            else{initDefaultDB();}
-          }catch(_e){initDefaultDB();}
-        } else {initDefaultDB();}
-      }
-    }catch(e){console.warn('cloud parse error',e);}
-  } else {
-    var bak2=null; try{bak2=localStorage.getItem(STORAGE_KEY+'_bak');}catch(_e){}
-    if(bak2){
-      try{
-        var bakDB2=JSON.parse(bak2);
-        var vb2=(bakDB2.estimates||[]).filter(function(e){return typeof e.date==='string'&&e.date>='2026-05-01';});
-        if(vb2.length>0){DB=bakDB2;applyMigrations();try{saveDB();}catch(_e){}}
-        else{initDefaultDB();}
-      }catch(_e){initDefaultDB();}
-    } else {initDefaultDB();}
+  // クラウドが使えない場合：ローカルがあればそのまま・なければbak復元
+  if(!cloudDB || typeof cloudDB!=='object'){
+    var lc=(DB.estimates?DB.estimates.length:0);
+    if(lc>0){ try{ saveDB(); }catch(_e){} finishInit(); return; }
+    var bak=null; try{bak=localStorage.getItem(STORAGE_KEY+'_bak');}catch(_e){}
+    if(bak){ try{ var bd=JSON.parse(bak); var vb=(bd.estimates||[]).filter(function(e){return typeof e.date==='string'&&e.date>='2026-05-01';}); if(vb.length>0){DB=bd;applyMigrations();try{saveDB();}catch(_e){}} else {initDefaultDB();} }catch(_e){initDefaultDB();} }
+    else { initDefaultDB(); }
+    finishInit(); return;
   }
+
+  // 日付を正規化するヘルパー
+  function normDate(e){ if(e && typeof e.date==='number'){ e.date=new Date(e.date).toISOString().slice(0,10); } return e; }
+
+  // ★ 案件（estimates）を id で統合。同じidは lastUpdate が新しい方を採用
+  var byId={};
+  function putEst(e){
+    if(!e) return; normDate(e);
+    // 2026-05-01未満（デモ）は除外
+    if(!(typeof e.date==='string' && e.date>='2026-05-01')) return;
+    var k=(e.id!=null?('id:'+e.id):('k:'+(e.person||'')+'|'+(e.customer||'')+'|'+(e.date||'')));
+    var ex=byId[k];
+    if(!ex){ byId[k]=e; return; }
+    var eu=(e.lastUpdate||e.date||''), xu=(ex.lastUpdate||ex.date||'');
+    if(eu>=xu) byId[k]=e;   // 新しい方（同値はローカル側）を採用
+  }
+  (cloudDB.estimates||[]).forEach(putEst);   // 先にクラウド
+  (DB.estimates||[]).forEach(putEst);        // 次にローカル（同値はこちら優先）
+  var mergedEst=Object.keys(byId).map(function(k){return byId[k];});
+
+  // idキーで和集合マージ（衝突時はローカル優先）：qa / notifications 用
+  function unionById(localArr, cloudArr){
+    var map={}, order=[];
+    function add(a){ (a||[]).forEach(function(x){ if(!x) return; var k=(x.id!=null?x.id:JSON.stringify(x)); if(!(k in map)){ order.push(k); } map[k]=x; }); }
+    add(cloudArr); add(localArr); // localを後に→衝突はlocal優先
+    return order.map(function(k){return map[k];});
+  }
+  var mergedQa=unionById(DB.qa, cloudDB.qa);
+  var mergedNotif=unionById(DB.notifications, cloudDB.notifications);
+
+  // config/members/teams：ローカルに無ければクラウドを採用
+  if((!DB.config) && cloudDB.config) DB.config=cloudDB.config;
+  if((!DB.members||!DB.members.length) && cloudDB.members) DB.members=cloudDB.members;
+  if((!DB.teams||!DB.teams.length) && cloudDB.teams) DB.teams=cloudDB.teams;
+
+  DB.estimates=mergedEst;
+  DB.qa=mergedQa;
+  DB.notifications=mergedNotif;
+  applyMigrations();
+
+  var mergedJson=JSON.stringify(DB);
+  try{ localStorage.setItem(STORAGE_KEY, mergedJson); }catch(e){}
+  try{ localStorage.setItem(STORAGE_KEY+'_bak', mergedJson); }catch(e){}
+
+  // 統合結果をクラウドへ書き戻し、他端末も収束させる
+  try{ saveDB(); }catch(_e){}
+  setSyncStatus('✓ 同期完了', 3000);
   finishInit();
 }
 function onCloudLoadFailed(err){
