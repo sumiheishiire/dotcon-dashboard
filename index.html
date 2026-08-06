@@ -1004,6 +1004,23 @@ function checkPw(){}
 </div>
 </div>
 
+<!-- 資料ビュアーモーダル（PDF/画像をダウンロードせずその場で表示） -->
+<div class="modal-overlay" id="docViewerModal" onclick="if(event.target===this)closeDocViewer()">
+<div class="modal" style="max-width:920px;width:92vw;padding:14px;height:88vh;display:flex;flex-direction:column;">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-shrink:0;">
+    <span style="font-size:12.5px;color:#888;">資料ビュアー</span>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <a id="docViewerDownload" href="#" target="_blank" download style="font-size:12px;color:#1a73e8;text-decoration:none;font-weight:600;">&#8659; ダウンロード</a>
+      <button class="btn btn-s" style="padding:6px 14px" onclick="closeDocViewer()">&#x2715; 閉じる</button>
+    </div>
+  </div>
+  <div style="flex:1;min-height:0;background:#525659;border-radius:8px;overflow:auto;display:flex;align-items:flex-start;justify-content:center;">
+    <iframe id="docViewerFrame" style="width:100%;height:100%;border:0;display:none;background:#525659;"></iframe>
+    <img id="docViewerImg" style="max-width:100%;display:none;">
+  </div>
+</div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -2465,8 +2482,36 @@ function renderTools(){
 }
 
 function openFile(url){
-  if(!url){ showToast('\u30ea\u30f3\u30af\u304c\u8a2d\u5b9a\u3055\u308c\u3066\u3044\u307e\u305b\u3093','error'); return; }
+  if(!url){ showToast('リンクが設定されていません','error'); return; }
+  if(/\.pdf(\?|#|$)/i.test(url) || /\.(jpg|jpeg|png|gif|webp)(\?|#|$)/i.test(url)){
+    openDocViewer(url);
+    return;
+  }
   window.open(url, '_blank');
+}
+function openDocViewer(url){
+  var modal=document.getElementById('docViewerModal');
+  var frame=document.getElementById('docViewerFrame');
+  var img=document.getElementById('docViewerImg');
+  var dl=document.getElementById('docViewerDownload');
+  var isImg=/\.(jpg|jpeg|png|gif|webp)(\?|#|$)/i.test(url);
+  if(isImg){
+    frame.style.display='none'; frame.src='';
+    img.style.display='block'; img.src=url;
+  } else {
+    img.style.display='none'; img.src='';
+    frame.style.display='block'; frame.src=url;
+  }
+  if(dl) dl.href=url;
+  if(modal) modal.classList.add('show');
+}
+function closeDocViewer(){
+  var modal=document.getElementById('docViewerModal');
+  var frame=document.getElementById('docViewerFrame');
+  var img=document.getElementById('docViewerImg');
+  if(frame) frame.src='';
+  if(img) img.src='';
+  if(modal) modal.classList.remove('show');
 }
 
 // \u52d5\u753b\u30d7\u30ec\u30a4\u30e4\u30fc\u30e2\u30fc\u30c0\u30eb\uff08OneDrive\u52d5\u753b\u306f\u30d6\u30e9\u30a6\u30b6\u3067\u76f4\u63a5\u958b\u304f\uff09
