@@ -1921,6 +1921,7 @@ const TOOLS = [
     cat:'catalog', type:'pdf', icon:'📊',
     color:'#e3f2fd', border:'#1a73e8',
     title:'Dotcon+ プレゼン資料（40枚）',
+    date:'2026-08-26',
     desc:'都市型水害・ヒートアイランド対策から製品特長、コスト比較、受賞・実績までを網羅した営業用プレゼン資料（2026/8/21版・全４０枚）',
     badge:'NEW', badgeColor:'#ff6f00',
     url:'https://sumiheishiire.github.io/dotcon-dashboard/dotcon_presentation_202608.pdf',
@@ -1934,6 +1935,7 @@ const TOOLS = [
     cat:'video', type:'video', icon:'🎬',
     color:'#fff3e0', border:'#f57c00',
     title:'Dotcon+ PV動画（新作）',
+    date:'2026-08-07',
     desc:'空撮を交えた最新PV。デザインのバリエーションと施工事例を一目で伝えられる、提案の冒頭に最適',
     badge:'NEW', badgeColor:'#ff6f00',
     url:'https://sumiheishiire.github.io/dotcon-dashboard/dotcon_pv.mp4',
@@ -1943,6 +1945,7 @@ const TOOLS = [
     cat:'cert', type:'pdf', icon:'📊',
     color:'#fff8e1', border:'#c39820',
     title:'Dotcon+ 性能評価試験結果報告書',
+    date:'2026-08-06',
     desc:'日本大学工学部 コンクリート工学研究室によるDotcon+の性能評価試験結果（令和7年12月・全5ページ）',
     badge:'NEW', badgeColor:'#ff6f00',
     url:'https://sumiheishiire.github.io/dotcon-dashboard/dotcon_perf_test_report.pdf',
@@ -1952,6 +1955,7 @@ const TOOLS = [
     cat:'catalog', type:'pdf', icon:'💧',
     color:'#fff8e1', border:'#c39820',
     title:'【路面内貯留槽】チラシ',
+    date:'2026-07-27',
     desc:'世界を変える次世代コンクリート舗装。透水・貯留・浸透・蒸発冷却。時間雨量200mm以上の透水試験済み／重車両対応のA4チラシ',
     badge:'NEW', badgeColor:'#ff6f00',
     url:'https://sumiheishiire.github.io/dotcon-dashboard/dotcon_flyer_chikuryuso.jpg',
@@ -2494,6 +2498,7 @@ function renderTools(){
         + (!hasUrl ? '<span style="font-size:9.5px;padding:1px 6px;border-radius:6px;background:#f5f5f5;color:#999;font-weight:700">\u6e96\u5099\u4e2d</span>' : '')
         + '</div>'
         + '<div style="font-size:10.5px;color:#777;line-height:1.55">' + t.desc + '</div>'
+        + (t.date ? '<div style="font-size:9px;color:#aaa;margin-top:1px">追加: ' + t.date + '</div>' : '')
         + '</div>'
         + '</div>';
     });
@@ -2523,7 +2528,8 @@ function openDocViewer(url){
     img.style.display='block'; img.src=url;
   } else {
     img.style.display='none'; img.src='';
-    frame.style.display='block'; frame.src=url;
+    frame.style.display='block';
+    frame.src = /\.pdf(\?|#|$)/i.test(url) ? ('https://docs.google.com/gview?embedded=true&url=' + encodeURIComponent(url)) : url;
   }
   if(dl) dl.href=url;
   if(modal) modal.classList.add('show');
