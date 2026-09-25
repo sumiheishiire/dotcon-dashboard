@@ -1783,7 +1783,9 @@ function renderCharts(){
               return v>0?(cust?cust+': ':'')+'\u00a5'+Number(v*10000).toLocaleString():'';
             }}},
             datalabels:{
-              display:false
+              display:true,anchor:'center',align:'center',
+              font:{size:9,weight:'bold'},color:'#fff',
+              formatter:function(v){return v>0?v+'万':'';}
             }
           },
           scales:{
